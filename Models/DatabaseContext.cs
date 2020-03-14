@@ -20,5 +20,8 @@ namespace BackEnd.Models
         public DbSet<User> Users { get; set; }
 
         public DbSet<Professor> Professores { get; set; }
+
+        public DbSet<Pais> Pais { get; set; }
+        public DbSet<Filho> Filhos { get; set; }
     }
 }
