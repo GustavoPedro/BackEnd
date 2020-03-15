@@ -18,6 +18,9 @@ using Newtonsoft.Json.Serialization;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
 using BackEnd.Models;
+using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.PlatformAbstractions;
+using System.IO;
 
 namespace BackEnd
 {
@@ -46,6 +49,19 @@ namespace BackEnd
                     .ServerVersion(new ServerVersion(new Version(8, 0, 18), ServerType.MySql))
             ));
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api PI", Version = "v1",Description = "Aplicação de gestão comportamental dos alunos",Contact = new OpenApiContact {Email= "gustavopedrodesouza@hotmail.com",Name="Gustavo"} });
+                string caminhoAplicacao =
+                 PlatformServices.Default.Application.ApplicationBasePath;
+                string nomeAplicacao =
+                    PlatformServices.Default.Application.ApplicationName;
+                string caminhoXmlDoc =
+                    Path.Combine(caminhoAplicacao, $"{nomeAplicacao}.xml");
+
+                c.IncludeXmlComments(caminhoXmlDoc);
+            });
+
             var key = Encoding.ASCII.GetBytes(Settings.Secret);
             services.AddAuthentication(x => {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -72,6 +88,13 @@ namespace BackEnd
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api PI V1");
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

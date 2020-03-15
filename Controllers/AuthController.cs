@@ -22,6 +22,12 @@ namespace BackEnd.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Realiza o login do usuário na aplicação
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Retorna um JSON com informações do usuário mais o token</returns>
+
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
