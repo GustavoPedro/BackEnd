@@ -13,7 +13,7 @@ namespace BackEnd.Models
         public DateTime Nascimento { get; set; }
 
         public int UsuarioId { get; set; }
-        public User Usuario { get; set; }
+        public Usuario Usuario { get; set; }
 
     }
 }

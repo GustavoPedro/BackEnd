@@ -25,25 +25,31 @@ namespace BackEnd.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
-        public async Task<dynamic> Login([FromBody]User model)
+        public async Task<dynamic> Login([FromBody]Usuario model)
         {
-            User user = await _context.Users.Where(usr => usr.Username == model.Username && usr.Password == model.Password).FirstOrDefaultAsync();
+            Usuario usuario = await _context.Usuarios.Where(usr => usr.Email == model.Email && usr.Senha == model.Senha).FirstOrDefaultAsync();
             //User user = UserRepository.Get(model.Username, model.Password);
-            if(user == null)
+            if(usuario == null)
             {
                 return NotFound(new {message="Usuário ou senha inválidas" });
             }
-            string token = TokenService.GenerateToken(user);
-            user.Password = "";
+            string token = TokenService.GenerateToken(usuario);
+            usuario.Senha = "";
             return new
             {
-                user = user,
+                user = usuario,
                 token = token
             };
         }
 
         [HttpGet]
         [Authorize(Roles = "Peao")]
-        public string Teste() => "Permitido";
+        [Route("notall")]
+        public string Teste() => "Permitido somente para peão";
+
+        [HttpGet]        
+        [AllowAnonymous]
+        [Route("all")]
+        public string Teste2() => "Permitido para todos";
     }
 }
