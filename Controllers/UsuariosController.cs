@@ -76,13 +76,15 @@ namespace BackEnd.Controllers
         /// <returns>Conflict em caso de email ou Cpf não forem encontrados</returns>
         [HttpPut]
         public async Task<IActionResult> PutUsuario(string cpf, Usuario usuario)
-        {
+        {           
+
             if (cpf != usuario.Cpf)
             {
                 return BadRequest();
             }
 
             _context.Entry(usuario).State = EntityState.Modified;
+            _context.Entry(usuario).Property(x => x.Senha).IsModified = false;
 
             try
             {
