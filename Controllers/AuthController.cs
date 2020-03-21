@@ -33,7 +33,7 @@ namespace BackEnd.Controllers
         [Route("login")]
         public async Task<dynamic> Login([FromBody]Usuario model)
         {
-            Usuario usuario = await _context.Usuarios.Where(usr => usr.Email == model.Email && usr.Senha == model.Senha).FirstOrDefaultAsync();
+            Usuario usuario = await _context.Usuario.Where(usr => usr.Email == model.Email && usr.Senha == model.Senha).FirstOrDefaultAsync();
             //User user = UserRepository.Get(model.Username, model.Password);
             if(usuario == null)
             {
@@ -47,15 +47,5 @@ namespace BackEnd.Controllers
                 token = token
             };
         }
-
-        [HttpGet]
-        [Authorize(Roles = "Peao")]
-        [Route("notall")]
-        public string Teste() => "Permitido somente para peão";
-
-        [HttpGet]        
-        [AllowAnonymous]
-        [Route("all")]
-        public string Teste2() => "Permitido para todos";
     }
 }

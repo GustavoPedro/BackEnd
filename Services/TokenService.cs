@@ -23,7 +23,7 @@ namespace BackEnd.Services
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Email, usuario.Email.ToString()),
-                    new Claim(ClaimTypes.Role, usuario.Papel.ToString())
+                    new Claim(ClaimTypes.Role, usuario.TipoUsuario.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256Signature)
