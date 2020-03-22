@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using BackEnd.Models;
 using Microsoft.AspNetCore.Authorization;
 using BackEnd.Services;
+using BackEnd.ViewModel;
+using AutoMapper;
 
 namespace BackEnd.Controllers
 {    
@@ -15,10 +17,11 @@ namespace BackEnd.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly DatabaseContext _context;
-
-        public UsuariosController(DatabaseContext context)
+        private readonly IMapper _mapper;
+        public UsuariosController(DatabaseContext context,IMapper mapper )
         {
             _context = context;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -82,8 +85,9 @@ namespace BackEnd.Controllers
         
         [HttpPut("/api/Usuarios/{cpf}")]
         [Authorize]
-        public async Task<IActionResult> PutUsuario(string cpf, Usuario usuario)
-        {           
+        public async Task<IActionResult> PutUsuario(string cpf, UsuarioViewModel usuarioViewModel)
+        {
+            Usuario usuario = _mapper.Map<Usuario>(usuarioViewModel);
 
             if (cpf != usuario.Cpf)
             {
@@ -134,8 +138,9 @@ namespace BackEnd.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("signup")]
-        public async Task<dynamic> PostUsuario(Usuario usuario)
+        public async Task<dynamic> PostUsuario([FromBody] UsuarioViewModel usuarioViewModel)
         {
+            Usuario usuario = _mapper.Map<Usuario>(usuarioViewModel);
             _context.Usuario.Add(usuario);
             try
             {
@@ -175,7 +180,7 @@ namespace BackEnd.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("signin")]
-        public async Task<dynamic> Login([FromBody]Usuario model)
+        public async Task<dynamic> Login([FromBody]UsuarioLoginViewModel model)
         {
             Usuario usuario = await _context.Usuario.Where(usr => usr.Email == model.Email && usr.Senha == model.Senha).FirstOrDefaultAsync();
             //User user = UserRepository.Get(model.Username, model.Password);

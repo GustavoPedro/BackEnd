@@ -21,6 +21,8 @@ using BackEnd.Models;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using BackEnd.ViewModel;
+using AutoMapper;
 
 namespace BackEnd
 {
@@ -51,7 +53,7 @@ namespace BackEnd
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api PI", Version = "v1",Description = "Aplicação de gestão comportamental dos alunos",Contact = new OpenApiContact {Email= "gustavopedrodesouza@hotmail.com",Name="Gustavo"} });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api PI", Version = "v1",Description = "Aplicação de gestão comportamental dos alunos",Contact = new OpenApiContact {Email= "https://github.com/GustavoPedro/BackEnd", Name="Gustavo, Fabricio e Fernando"} });
                 string caminhoAplicacao =
                  PlatformServices.Default.Application.ApplicationBasePath;
                 string nomeAplicacao =
@@ -79,7 +81,14 @@ namespace BackEnd
                 };
             });
 
+            var config = new AutoMapper.MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<UsuarioViewModel, Usuario>();
+            });
 
+            IMapper mapper = config.CreateMapper();
+
+            services.AddSingleton(mapper);
 
 
 
