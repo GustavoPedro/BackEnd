@@ -21,6 +21,10 @@ namespace BackEnd.Controllers
         }
 
         // GET: api/Escolas
+        /// <summary>
+        /// Realiza a consulta de todas as escolas
+        /// </summary>
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Escola>>> GetEscola()
         {
@@ -28,10 +32,21 @@ namespace BackEnd.Controllers
         }
 
         // GET: api/Escolas/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Escola>> GetEscola(string id)
+        /// <summary>
+        /// Realiza a consulta de uma escola específica pelo seu CNPJ
+        /// </summary>
+
+        [HttpGet]
+        [Route("{cnpj}")]
+        public async Task<ActionResult<Escola>> GetEscola(string cnpj)
         {
-            var escola = await _context.Escola.FindAsync(id);
+            var escola = await _context.Escola.Where(us => us.Cnpj == cnpj).
+                Select(us => new Escola
+                {
+                    Cnpj = us.Cnpj,
+                    Nome = us.Nome,
+                    Telefone = us.Telefone
+                }).FirstOrDefaultAsync();
 
             if (escola == null)
             {
@@ -42,12 +57,14 @@ namespace BackEnd.Controllers
         }
 
         // PUT: api/Escolas/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEscola(string id, Escola escola)
+        /// <summary>
+        /// Realiza a atualização de uma escola específica. Necessário informar o CNPJ como parâmetro na URL
+        /// </summary>
+        
+        [HttpPut("{cnpj}")]
+        public async Task<IActionResult> PutEscola(string cnpj, Escola escola)
         {
-            if (id != escola.Cnpj)
+            if (cnpj != escola.Cnpj)
             {
                 return BadRequest();
             }
@@ -60,7 +77,7 @@ namespace BackEnd.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EscolaExists(id))
+                if (!EscolaExists(cnpj))
                 {
                     return NotFound();
                 }
@@ -74,8 +91,10 @@ namespace BackEnd.Controllers
         }
 
         // POST: api/Escolas
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Realiza o cadastro de uma escola
+        /// </summary>
+        
         [HttpPost]
         public async Task<ActionResult<Escola>> PostEscola(Escola escola)
         {
@@ -88,7 +107,7 @@ namespace BackEnd.Controllers
             {
                 if (EscolaExists(escola.Cnpj))
                 {
-                    return Conflict();
+                    return Conflict(new { msg = "O Cnpj informado já existe" });
                 }
                 else
                 {
@@ -100,10 +119,14 @@ namespace BackEnd.Controllers
         }
 
         // DELETE: api/Escolas/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Escola>> DeleteEscola(string id)
+        /// <summary>
+        /// Realiza a deleção de uma escola pelo seu CNPJ
+        /// </summary>
+
+        [HttpDelete("{cnpj}")]
+        public async Task<ActionResult<Escola>> DeleteEscola(string cnpj)
         {
-            var escola = await _context.Escola.FindAsync(id);
+            var escola = await _context.Escola.FindAsync(cnpj);
             if (escola == null)
             {
                 return NotFound();
@@ -115,9 +138,9 @@ namespace BackEnd.Controllers
             return escola;
         }
 
-        private bool EscolaExists(string id)
+        private bool EscolaExists(string cnpj)
         {
-            return _context.Escola.Any(e => e.Cnpj == id);
+            return _context.Escola.Any(e => e.Cnpj == cnpj);
         }
     }
 }
