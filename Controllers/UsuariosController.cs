@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Models;
+using Microsoft.AspNetCore.Authorization;
+using BackEnd.Services;
 
 namespace BackEnd.Controllers
-{
-    [Route("api/[controller]")]
+{    
     [ApiController]
     public class UsuariosController : ControllerBase
     {
@@ -19,13 +20,15 @@ namespace BackEnd.Controllers
         {
             _context = context;
         }
-        
+
         /// <summary>
         /// Realiza a consulta de todos os usuários
         /// </summary>
         /// <returns>Retorna todos os usuários</returns>
 
-        [HttpGet]        
+        [Authorize(Roles = "Professor,Adm")]
+        [HttpGet]
+        [Route("api/Usuarios")]         
         public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
         {
             return await _context.Usuario.Select(us => new Usuario
@@ -44,8 +47,10 @@ namespace BackEnd.Controllers
         /// Realiza a consulta de um usuário específico através do cpf do mesmo
         /// </summary>
         /// <returns>Retorna todos os usuários</returns>
-        [HttpGet]
-        [Route("byid")]
+        /// 
+        
+        [HttpGet("/api/Usuarios/{cpf}")]
+        [Authorize]
         public async Task<ActionResult<Usuario>> GetUsuario(string cpf)
         {
             var usuario = await _context.Usuario.Where(us => us.Cpf == cpf).
@@ -62,7 +67,7 @@ namespace BackEnd.Controllers
 
             if (usuario == null)
             {
-                return NotFound();
+                return NotFound(new {msg="Não foi possível encontrar usuário" });
             }
 
             return usuario;
@@ -74,7 +79,9 @@ namespace BackEnd.Controllers
         /// <returns>Status 201 em caso de sucesso</returns>
         /// <returns>Not found em caso de não encontrar Cpf</returns>
         /// <returns>Conflict em caso de email ou Cpf não forem encontrados</returns>
-        [HttpPut]
+        
+        [HttpPut("/api/Usuarios/{cpf}")]
+        [Authorize]
         public async Task<IActionResult> PutUsuario(string cpf, Usuario usuario)
         {           
 
@@ -94,7 +101,7 @@ namespace BackEnd.Controllers
             {
                 if (!UsuarioExists(cpf))
                 {
-                    return NotFound();
+                    return NotFound(new {msg = "Não foi possível encontrar usuário" });
                 }
                 else
                 {
@@ -114,7 +121,7 @@ namespace BackEnd.Controllers
 
             }
 
-            return NoContent();
+            return StatusCode(200,new {msg = $"Usuário {usuario.NomeSobrenome} alterado com sucesso" });
         }
 
 
@@ -123,8 +130,11 @@ namespace BackEnd.Controllers
         /// </summary>
         /// <returns>Usuário cadastrado</returns>
         /// <returns>Conflito caso cpf já exista</returns>
+        
         [HttpPost]
-        public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
+        [AllowAnonymous]
+        [Route("signup")]
+        public async Task<dynamic> PostUsuario(Usuario usuario)
         {
             _context.Usuario.Add(usuario);
             try
@@ -142,8 +152,38 @@ namespace BackEnd.Controllers
                     throw;
                 }
             }
+            return GetUserLogged(usuario);
+        }
+
+        private object GetUserLogged(Usuario usuario) 
+        {
+            string token = TokenService.GenerateToken(usuario);
             usuario.Senha = "";
-            return CreatedAtAction("GetUsuario", new { id = usuario.Cpf }, usuario);
+            return new
+            {
+                user = usuario,
+                token = token
+            };
+        }
+
+        /// <summary>
+        /// Realiza o login do usuário na aplicação
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Retorna um JSON com informações do usuário mais o token</returns>
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("signin")]
+        public async Task<dynamic> Login([FromBody]Usuario model)
+        {
+            Usuario usuario = await _context.Usuario.Where(usr => usr.Email == model.Email && usr.Senha == model.Senha).FirstOrDefaultAsync();
+            //User user = UserRepository.Get(model.Username, model.Password);
+            if (usuario == null)
+            {
+                return NotFound(new { message = "Usuário ou senha inválidas" });
+            }
+            return GetUserLogged(usuario);
         }
 
         /// <summary>
@@ -151,13 +191,15 @@ namespace BackEnd.Controllers
         /// </summary>
         /// <returns>Usuário deletado</returns>
         /// <returns>Not found caso usuário do cpf não seja encontrado</returns>
-        [HttpDelete]
+
+        [HttpDelete("/api/Usuarios/{cpf}")]
+        [Authorize]
         public async Task<ActionResult<Usuario>> DeleteUsuario(string cpf)
         {
             var usuario = await _context.Usuario.FindAsync(cpf);
             if (usuario == null)
             {
-                return NotFound();
+                return NotFound(new { msg = "Não foi possível encontrar usuário" });
             }
 
             _context.Usuario.Remove(usuario);
