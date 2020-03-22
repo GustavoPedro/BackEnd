@@ -206,11 +206,7 @@ namespace BackEnd.Models
                     .IsUnique();
 
                 entity.HasIndex(e => e.EscolaCnpj)
-                    .HasName("fk_Usuario_Escola_idx");
-
-                entity.HasIndex(e => e.Senha)
-                    .HasName("senha_UNIQUE")
-                    .IsUnique();
+                    .HasName("fk_Usuario_Escola_idx");                
 
                 entity.Property(e => e.Cpf)
                     .HasColumnName("cpf")
