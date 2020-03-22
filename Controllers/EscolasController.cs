@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackEnd.Controllers
 {
@@ -18,18 +19,7 @@ namespace BackEnd.Controllers
         public EscolasController(DatabaseContext context)
         {
             _context = context;
-        }
-
-        // GET: api/Escolas
-        /// <summary>
-        /// Realiza a consulta de todas as escolas
-        /// </summary>
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Escola>>> GetEscola()
-        {
-            return await _context.Escola.ToListAsync();
-        }
+        }      
 
         // GET: api/Escolas/5
         /// <summary>
@@ -50,7 +40,7 @@ namespace BackEnd.Controllers
 
             if (escola == null)
             {
-                return NotFound();
+                return NotFound(new {msg = "Escola não encontrada"});
             }
 
             return escola;
@@ -62,6 +52,7 @@ namespace BackEnd.Controllers
         /// </summary>
         
         [HttpPut("{cnpj}")]
+        [Authorize(Roles = "Adm")]
         public async Task<IActionResult> PutEscola(string cnpj, Escola escola)
         {
             if (cnpj != escola.Cnpj)
@@ -79,7 +70,7 @@ namespace BackEnd.Controllers
             {
                 if (!EscolaExists(cnpj))
                 {
-                    return NotFound();
+                    return NotFound(new {msg = "Não foi possível encontrar escola com o Cnpj informado" });
                 }
                 else
                 {
@@ -96,6 +87,7 @@ namespace BackEnd.Controllers
         /// </summary>
         
         [HttpPost]
+        [Authorize(Roles = "Adm")]
         public async Task<ActionResult<Escola>> PostEscola(Escola escola)
         {
             _context.Escola.Add(escola);
@@ -124,6 +116,7 @@ namespace BackEnd.Controllers
         /// </summary>
 
         [HttpDelete("{cnpj}")]
+        [Authorize(Roles = "Adm")]
         public async Task<ActionResult<Escola>> DeleteEscola(string cnpj)
         {
             var escola = await _context.Escola.FindAsync(cnpj);
