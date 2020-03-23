@@ -221,5 +221,49 @@ namespace BackEnd.Controllers
         {
             return _context.Usuario.Any(e => e.Cpf == id);
         }
+
+
+        /// <summary>
+        /// Altera Senha informando o CPF do usuario
+        /// </summary>
+        [HttpPut("/api/Usuarios/Senha/{cpf}")]
+        [Authorize]
+        public async Task<IActionResult> PutSenha(string cpf, UsuarioViewModel usuarioViewModel)
+        {
+            Usuario usuario = _mapper.Map<Usuario>(usuarioViewModel);
+           
+
+            if (cpf != usuario.Cpf)
+            {
+                return BadRequest();
+            }
+                _context.Entry(usuario).State = EntityState.Modified;
+                _context.Entry(usuario).Property(x => x.Cpf).IsModified = false;
+                _context.Entry(usuario).Property(x => x.Email).IsModified = false;
+                _context.Entry(usuario).Property(x => x.TipoUsuario).IsModified = false;
+                _context.Entry(usuario).Property(x => x.DataNascimento).IsModified = false;
+                _context.Entry(usuario).Property(x => x.NomeSobrenome).IsModified = false;
+                _context.Entry(usuario).Property(x => x.Telefone).IsModified = false;
+                _context.Entry(usuario).Property(x => x.EscolaCnpj).IsModified = false;
+     
+            try
+
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UsuarioExists(cpf))
+                {
+                    return NotFound(new { msg = "Não foi possível encontrar usuário" });
+                }
+
+                else
+                {
+                    throw;
+                }
+            } 
+                return StatusCode(200, new { msg = $"Senha alterada com sucesso" });
+        }
     }
 }
