@@ -30,21 +30,29 @@ namespace BackEnd.Controllers
         /// Realiza a consulta de todos os usuários
         /// </summary>
         /// <returns>Retorna todos os usuários</returns>
-
-        [Authorize(Roles = "Professor,Adm")]
-        [HttpGet]
-        [Route("api/Usuarios")]         
-        public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
+        [HttpGet("/api/Usuario")]
+        [Authorize]
+        [TokenEmailFilter]
+        public async Task<ActionResult<Usuario>> GetUsuario([FromQuery] string email)
         {
-            return await _context.Usuario.Select(us => new Usuario
-            {                
-                Email = us.Email,
-                TipoUsuario = us.TipoUsuario,
-                DataNascimento = us.DataNascimento,
-                NomeSobrenome = us.NomeSobrenome,
-                Telefone = us.Telefone,
-                EscolaCnpj = us.EscolaCnpj
-            }).ToListAsync();
+            var usuario = await _context.Usuario.Where(us => us.Email == email).
+                Select(us => new Usuario
+                {
+                    Cpf = us.Cpf,
+                    Email = us.Email,
+                    TipoUsuario = us.TipoUsuario,
+                    DataNascimento = us.DataNascimento,
+                    NomeSobrenome = us.NomeSobrenome,
+                    Telefone = us.Telefone,
+                    EscolaCnpj = us.EscolaCnpj
+                }).FirstOrDefaultAsync();
+
+            if (usuario == null)
+            {
+                return NotFound(new { msg = "Não foi possível encontrar usuário" });
+            }
+
+            return usuario;
         }
 
         /// <summary>
@@ -55,7 +63,7 @@ namespace BackEnd.Controllers
 
         [HttpGet("/api/Usuarios/{email}")]
         [Authorize]
-        public async Task<ActionResult<Usuario>> GetUsuario(string email)
+        public async Task<ActionResult<Usuario>> GetUsuarioNome(string email)
         {
             var usuario = await _context.Usuario.Where(us => us.Email == email).
                 Select(us => new Usuario
