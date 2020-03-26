@@ -52,16 +52,15 @@ namespace BackEnd.Controllers
         /// </summary>
         /// <returns>Retorna todos os usuários</returns>
         /// 
-        
-        [HttpGet("/api/Usuario")]
+
+        [HttpGet("/api/Usuarios/{email}")]
         [Authorize]
-        [TokenEmailFilter]
-        public async Task<ActionResult<Usuario>> GetUsuario([FromQuery] string email)
+        public async Task<ActionResult<Usuario>> GetUsuario(string email)
         {
             var usuario = await _context.Usuario.Where(us => us.Email == email).
-                Select(us => new Usuario 
+                Select(us => new Usuario
                 {
-                    Cpf = us.Cpf, 
+                    Cpf = us.Cpf,
                     Email = us.Email,
                     TipoUsuario = us.TipoUsuario,
                     DataNascimento = us.DataNascimento,
@@ -72,7 +71,7 @@ namespace BackEnd.Controllers
 
             if (usuario == null)
             {
-                return NotFound(new {msg="Não foi possível encontrar usuário" });
+                return NotFound(new { msg = "Não foi possível encontrar usuário" });
             }
 
             return usuario;
@@ -84,7 +83,7 @@ namespace BackEnd.Controllers
         /// <returns>Status 201 em caso de sucesso</returns>
         /// <returns>Not found em caso de não encontrar Cpf</returns>
         /// <returns>Conflict em caso de email ou Cpf não forem encontrados</returns>
-        
+
         [HttpPut("/api/Usuarios")]
         [Authorize]
         [TokenEmailFilter]
@@ -159,14 +158,13 @@ namespace BackEnd.Controllers
             return GetUserLogged(usuario);
         }
 
-        private object GetUserLogged(Usuario usuario) 
+        private object GetUserLogged(Usuario usuario)
         {
             string token = TokenService.GenerateToken(usuario);
             usuario.Senha = "";
             return new
             {
-                nome = usuario.NomeSobrenome,
-                tipoUsuario = usuario.TipoUsuario,
+                Usuario = usuario,
                 token = token
             };
         }
@@ -221,7 +219,7 @@ namespace BackEnd.Controllers
         private bool UsuarioExists(string email)
         {
             return _context.Usuario.Any(e => e.Email == email);
-        }            
+        }
 
 
         /// <summary>
@@ -229,37 +227,30 @@ namespace BackEnd.Controllers
         /// </summary>
         [HttpPut("/api/Usuarios/Senha")]
         [Authorize]
-        public async Task<IActionResult> PutSenha([FromQuery] string email, UsuarioViewModel usuarioViewModel)
+        [TokenEmailFilter]
+        public async Task<IActionResult> PutSenha(Usuario usuario)
         {
-            Usuario usuario = _mapper.Map<Usuario>(usuarioViewModel);
-           
-                _context.Entry(usuario).State = EntityState.Modified;
-                _context.Entry(usuario).Property(x => x.Cpf).IsModified = false;
-                _context.Entry(usuario).Property(x => x.Email).IsModified = false;
-                _context.Entry(usuario).Property(x => x.TipoUsuario).IsModified = false;
-                _context.Entry(usuario).Property(x => x.DataNascimento).IsModified = false;
-                _context.Entry(usuario).Property(x => x.NomeSobrenome).IsModified = false;
-                _context.Entry(usuario).Property(x => x.Telefone).IsModified = false;
-                _context.Entry(usuario).Property(x => x.EscolaCnpj).IsModified = false;
-     
-            try
 
+            Usuario user = _context.Usuario.Where(usr => usr.Email == usuario.Email).FirstOrDefault();
+
+            if (usuario.Senha == user.Senha)
             {
+                return BadRequest(new { msg = "Sua senha não pode ser idêntica a senha anterior" });
+            }
+            try
+            {
+                user.Senha = usuario.Senha;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuarioExists(email))
+                if (!UsuarioExists(usuario.Email))
                 {
                     return NotFound(new { msg = "Não foi possível encontrar usuário" });
                 }
+            }
 
-                else
-                {
-                    throw;
-                }
-            } 
-                return StatusCode(200, new { msg = $"Senha alterada com sucesso" });
+            return StatusCode(200, new { msg = $"Senha alterada com sucesso" });
         }
     }
 }
