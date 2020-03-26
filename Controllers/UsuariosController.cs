@@ -196,7 +196,7 @@ namespace BackEnd.Controllers
         /// <returns>Usuário deletado</returns>
         /// <returns>Not found caso usuário do cpf não seja encontrado</returns>
 
-        [HttpDelete("/api/Usuarios/")]
+        [HttpDelete("/api/Usuarios")]
         [Authorize]
         [TokenEmailFilter]
         public async Task<ActionResult<Usuario>> DeleteUsuario(string email)
