@@ -10,10 +10,12 @@ using Microsoft.AspNetCore.Authorization;
 using BackEnd.Services;
 using BackEnd.ViewModel;
 using AutoMapper;
+using System.IdentityModel.Tokens.Jwt;
+using BackEnd.Filters;
 
 namespace BackEnd.Controllers
 {    
-    [ApiController]
+    [ApiController]    
     public class UsuariosController : ControllerBase
     {
         private readonly DatabaseContext _context;
@@ -83,16 +85,13 @@ namespace BackEnd.Controllers
         /// <returns>Not found em caso de não encontrar Cpf</returns>
         /// <returns>Conflict em caso de email ou Cpf não forem encontrados</returns>
         
-        [HttpPut("/api/Usuarios/{cpf}")]
+        [HttpPut("/api/Usuarios")]
         [Authorize]
-        public async Task<IActionResult> PutUsuario(string cpf, UsuarioViewModel usuarioViewModel)
-        {
+        [TokenEmailFilter]
+        public async Task<IActionResult> PutUsuario([FromQuery]string email, UsuarioViewModel usuarioViewModel)
+        {           
+            
             Usuario usuario = _mapper.Map<Usuario>(usuarioViewModel);
-
-            if (cpf != usuario.Cpf)
-            {
-                return BadRequest();
-            }
 
             _context.Entry(usuario).State = EntityState.Modified;
             _context.Entry(usuario).Property(x => x.Senha).IsModified = false;
@@ -103,7 +102,7 @@ namespace BackEnd.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuarioExists(cpf))
+                if (!UsuarioExists("",email))
                 {
                     return NotFound(new {msg = "Não foi possível encontrar usuário" });
                 }

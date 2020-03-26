@@ -23,6 +23,7 @@ using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
 using BackEnd.ViewModel;
 using AutoMapper;
+using BackEnd.Filters;
 
 namespace BackEnd
 {
@@ -39,6 +40,7 @@ namespace BackEnd
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
+            services.AddScoped<TokenEmailFilter>();
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
