@@ -37,8 +37,7 @@ namespace BackEnd.Controllers
         public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
         {
             return await _context.Usuario.Select(us => new Usuario
-            {
-                Cpf = us.Cpf,
+            {                
                 Email = us.Email,
                 TipoUsuario = us.TipoUsuario,
                 DataNascimento = us.DataNascimento,
@@ -54,11 +53,12 @@ namespace BackEnd.Controllers
         /// <returns>Retorna todos os usuários</returns>
         /// 
         
-        [HttpGet("/api/Usuarios/{cpf}")]
+        [HttpGet("/api/Usuario")]
         [Authorize]
-        public async Task<ActionResult<Usuario>> GetUsuario(string cpf)
+        [TokenEmailFilter]
+        public async Task<ActionResult<Usuario>> GetUsuario([FromQuery] string email)
         {
-            var usuario = await _context.Usuario.Where(us => us.Cpf == cpf).
+            var usuario = await _context.Usuario.Where(us => us.Email == email).
                 Select(us => new Usuario 
                 {
                     Cpf = us.Cpf, 
@@ -102,7 +102,7 @@ namespace BackEnd.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuarioExists("",email))
+                if (!UsuarioExists(email))
                 {
                     return NotFound(new {msg = "Não foi possível encontrar usuário" });
                 }
@@ -165,7 +165,8 @@ namespace BackEnd.Controllers
             usuario.Senha = "";
             return new
             {
-                user = usuario,
+                nome = usuario.NomeSobrenome,
+                tipoUsuario = usuario.TipoUsuario,
                 token = token
             };
         }
@@ -217,26 +218,21 @@ namespace BackEnd.Controllers
         {
             return _context.Usuario.Any(e => e.Cpf == id || e.Email == email);
         }
-        private bool UsuarioExists(string id)
+        private bool UsuarioExists(string email)
         {
-            return _context.Usuario.Any(e => e.Cpf == id);
-        }
+            return _context.Usuario.Any(e => e.Email == email);
+        }            
 
 
         /// <summary>
         /// Altera Senha informando o CPF do usuario
         /// </summary>
-        [HttpPut("/api/Usuarios/Senha/{cpf}")]
+        [HttpPut("/api/Usuarios/Senha")]
         [Authorize]
-        public async Task<IActionResult> PutSenha(string cpf, UsuarioViewModel usuarioViewModel)
+        public async Task<IActionResult> PutSenha([FromQuery] string email, UsuarioViewModel usuarioViewModel)
         {
             Usuario usuario = _mapper.Map<Usuario>(usuarioViewModel);
            
-
-            if (cpf != usuario.Cpf)
-            {
-                return BadRequest();
-            }
                 _context.Entry(usuario).State = EntityState.Modified;
                 _context.Entry(usuario).Property(x => x.Cpf).IsModified = false;
                 _context.Entry(usuario).Property(x => x.Email).IsModified = false;
@@ -253,7 +249,7 @@ namespace BackEnd.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuarioExists(cpf))
+                if (!UsuarioExists(email))
                 {
                     return NotFound(new { msg = "Não foi possível encontrar usuário" });
                 }
