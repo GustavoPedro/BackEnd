@@ -196,11 +196,12 @@ namespace BackEnd.Controllers
         /// <returns>Usuário deletado</returns>
         /// <returns>Not found caso usuário do cpf não seja encontrado</returns>
 
-        [HttpDelete("/api/Usuarios/{cpf}")]
+        [HttpDelete("/api/Usuarios/")]
         [Authorize]
-        public async Task<ActionResult<Usuario>> DeleteUsuario(string cpf)
+        [TokenEmailFilter]
+        public async Task<ActionResult<Usuario>> DeleteUsuario(string email)
         {
-            var usuario = await _context.Usuario.FindAsync(cpf);
+            var usuario = await _context.Usuario.Where(usr => usr.Email == email).FirstOrDefaultAsync();
             if (usuario == null)
             {
                 return NotFound(new { msg = "Não foi possível encontrar usuário" });
