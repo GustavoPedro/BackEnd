@@ -27,9 +27,9 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Realiza a consulta de todos os usuários
+        /// Realiza a consulta de usuário por email
         /// </summary>
-        /// <returns>Retorna todos os usuários</returns>
+        /// <returns>Retorna usuário correspondente ao email</returns>
         [HttpGet("/api/Usuario")]
         [Authorize]
         [TokenEmailFilter]
@@ -57,9 +57,9 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Realiza a consulta de um usuário específico através do cpf do mesmo
+        /// Realiza a consulta de um usuário específico através do nome dele
         /// </summary>
-        /// <returns>Retorna todos os usuários</returns>
+        /// <returns>Retorna todos usuário filtrando por nome</returns>
         /// 
 
         [HttpGet("/api/Usuarios/{email}")]
@@ -87,11 +87,9 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Realiza a atualização de um usuário específico. Requisição necessita do cpf como parâmetro na url
+        /// Retorna todos os usuários
         /// </summary>
-        /// <returns>Status 201 em caso de sucesso</returns>
-        /// <returns>Not found em caso de não encontrar Cpf</returns>
-        /// <returns>Conflict em caso de email ou Cpf não forem encontrados</returns>
+        /// <returns>Todos os usuários</returns>
 
         [HttpPut("/api/Usuarios")]
         [Authorize]
@@ -199,7 +197,7 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Realiza a deleção do usuário através de seu cpf
+        /// Realiza a deleção do usuário através de seu email
         /// </summary>
         /// <returns>Usuário deletado</returns>
         /// <returns>Not found caso usuário do cpf não seja encontrado</returns>
