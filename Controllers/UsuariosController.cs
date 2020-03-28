@@ -61,22 +61,39 @@ namespace BackEnd.Controllers
         /// </summary>
         /// <returns>Retorna todos usuário filtrando por nome</returns>
         /// 
-
-        [HttpGet("/api/Usuarios/{email}")]
-        [Authorize]
-        public async Task<ActionResult<Usuario>> GetUsuarioNome(string email)
+        public static string ConvertToUpperCase(string input)
         {
-            var usuario = await _context.Usuario.Where(us => us.Email == email).
-                Select(us => new Usuario
+            string output = "";
+            for (int i  = 0; i < input.Length; i++)
+            {
+                if (input[i] >= 'A' && input[i] <= 'Z')
                 {
-                    Cpf = us.Cpf,
-                    Email = us.Email,
-                    TipoUsuario = us.TipoUsuario,
-                    DataNascimento = us.DataNascimento,
-                    NomeSobrenome = us.NomeSobrenome,
-                    Telefone = us.Telefone,
-                    EscolaCnpj = us.EscolaCnpj
-                }).FirstOrDefaultAsync();
+                    output +=(char) (input[i] -'A' + 'a');
+                }
+                else
+                {
+                    output += input[i];
+                }
+            }
+            return output;
+        }
+
+        [HttpGet("/api/Usuarios/{nomeSobrenome}")]
+        [Authorize]
+        public async Task<ActionResult<object>> GetUsuarioNome(string nomeSobrenome)
+        {
+
+            nomeSobrenome=nomeSobrenome.ToUpper();
+            List <Usuario> usuario =  _context.Usuario.Where(usr => usr.NomeSobrenome.ToUpper().Contains(nomeSobrenome.ToUpper())).Select(us => new Usuario
+            {
+                Cpf = us.Cpf,
+                Email = us.Email,
+                TipoUsuario = us.TipoUsuario,
+                DataNascimento = us.DataNascimento,
+                NomeSobrenome = us.NomeSobrenome,
+                Telefone = us.Telefone,
+                EscolaCnpj = us.EscolaCnpj
+            }).ToList();
 
             if (usuario == null)
             {
