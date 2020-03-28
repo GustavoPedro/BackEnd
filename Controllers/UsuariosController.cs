@@ -33,18 +33,19 @@ namespace BackEnd.Controllers
         [HttpGet("/api/Usuario")]
         [Authorize]
         [TokenEmailFilter]
-        public async Task<ActionResult<Usuario>> GetUsuario([FromQuery] string email)
+        public async Task<ActionResult<object>> GetUsuario([FromQuery] string email)
         {
-            var usuario = await _context.Usuario.Where(us => us.Email == email).
-                Select(us => new Usuario
+            var usuario = await _context.Usuario
+                .Where(us => us.Email == email)
+                .Select(us => new
                 {
                     Cpf = us.Cpf,
                     Email = us.Email,
                     TipoUsuario = us.TipoUsuario,
                     DataNascimento = us.DataNascimento,
                     NomeSobrenome = us.NomeSobrenome,
-                    Telefone = us.Telefone,
-                    EscolaCnpj = us.EscolaCnpj
+                    Telefone = us.Telefone,                    
+                    Escola = us.EscolaCnpjNavigation.Nome
                 }).FirstOrDefaultAsync();
 
             if (usuario == null)
