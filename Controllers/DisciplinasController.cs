@@ -83,8 +83,7 @@ namespace BackEnd.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        [Authorize(Roles = "Professor,Adm")]
-        [TokenEmailFilter]
+        [Authorize(Roles = "Professor,Adm")]        
         public async Task<ActionResult<Disciplina>> PostDisciplina(Disciplina disciplina)
         {
             _context.Disciplina.Add(disciplina);
@@ -95,8 +94,7 @@ namespace BackEnd.Controllers
 
         // DELETE: api/Disciplinas/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Professor,Adm")]
-        [TokenEmailFilter]
+        [Authorize(Roles = "Professor,Adm")]        
         public async Task<ActionResult<Disciplina>> DeleteDisciplina(int id)
         {
             var disciplina = await _context.Disciplina.FindAsync(id);
