@@ -102,6 +102,36 @@ namespace BackEnd.Controllers
             return CreatedAtAction("GetDisciplina", new { id = disciplina.IdDisciplina }, disciplina);
         }
 
+
+        // POST: api/Disciplina/InserirAluno
+        [HttpPost]
+        [Route("/api/Disciplina/InserirAluno")]
+        [Authorize(Roles = "Professor,Adm")]
+        [TokenEmailFilter]
+        public async Task<dynamic> PostInserirAluno([FromBody] UsuarioDisciplina usuarioDisciplina)
+        {
+            _context.UsuarioDisciplina.Add(usuarioDisciplina);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if(!DisciplinaExists(usuarioDisciplina.DisciplinaIdDisciplina))
+                {
+                    return NotFound(new { msg = "Não foi possível encontrar a disciplina" });
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            CreatedAtAction("GetDisciplina", new { id = usuarioDisciplina.IdUsuarioDisciplina }, usuarioDisciplina);
+            return StatusCode(200, new { msg = $"Cpf {usuarioDisciplina.UsuarioCpf} cadastrado com sucesso" });
+        }
+
         // DELETE: api/Disciplinas/5
         [HttpDelete("/api/Disciplina/{id}")]
         [Authorize(Roles = "Professor,Adm")]

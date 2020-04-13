@@ -79,7 +79,6 @@ namespace BackEnd.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost("/api/Atividades")]
-        [Route("/api/Atividades")]
         [Authorize(Roles = "Professor,Adm")]
         public async Task<ActionResult<Atividade>> PostAtividade(Atividade atividade)
         {
