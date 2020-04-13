@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackEnd.Controllers
 {
@@ -21,21 +22,21 @@ namespace BackEnd.Controllers
         }
 
         // GET: api/Atividades
-        [HttpGet]
+        [HttpGet("/api/Atividades")]
         public async Task<ActionResult<IEnumerable<Atividade>>> GetAtividade()
         {
             return await _context.Atividade.ToListAsync();
         }
 
         // GET: api/Atividades/5
-        [HttpGet("{id}")]
+        [HttpGet("/api/Atividades/{id}")]
         public async Task<ActionResult<Atividade>> GetAtividade(int id)
         {
             var atividade = await _context.Atividade.FindAsync(id);
 
             if (atividade == null)
             {
-                return NotFound();
+                return NotFound(new { msg = "Não foi possível encontrar a atividade" });
             }
 
             return atividade;
@@ -44,12 +45,13 @@ namespace BackEnd.Controllers
         // PUT: api/Atividades/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
+        [HttpPut("/api/Atividades/{id}")]
+        [Authorize(Roles = "Professor, Adm")]
         public async Task<IActionResult> PutAtividade(int id, Atividade atividade)
         {
             if (id != atividade.IdAtividade)
             {
-                return BadRequest();
+                return BadRequest(new { msg = "Não foi possivel encontrar a atividade informada" });
             }
 
             _context.Entry(atividade).State = EntityState.Modified;
@@ -62,7 +64,7 @@ namespace BackEnd.Controllers
             {
                 if (!AtividadeExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { msg = "Não foi possível encontrar a atividade" });
                 }
                 else
                 {
@@ -70,29 +72,46 @@ namespace BackEnd.Controllers
                 }
             }
 
-            return NoContent();
+            return StatusCode(200, new { msg = $"Atividade {atividade.Atividade1} alterada com sucesso" });
         }
 
         // POST: api/Atividades
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
+        [HttpPost("/api/Atividades")]
+        [Route("/api/Atividades")]
+        [Authorize(Roles = "Professor,Adm")]
         public async Task<ActionResult<Atividade>> PostAtividade(Atividade atividade)
         {
             _context.Atividade.Add(atividade);
-            await _context.SaveChangesAsync();
 
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (AtividadeExists(atividade.IdAtividade))
+                {
+                    return Conflict(new { msg = "Esta atividade já está cadastrada no sistema!" });
+                }
+
+                else
+                {
+                    throw;
+                }
+            }
             return CreatedAtAction("GetAtividade", new { id = atividade.IdAtividade }, atividade);
         }
 
         // DELETE: api/Atividades/5
-        [HttpDelete("{id}")]
+        [HttpDelete("/api/Atividades/{id}")]
         public async Task<ActionResult<Atividade>> DeleteAtividade(int id)
         {
             var atividade = await _context.Atividade.FindAsync(id);
             if (atividade == null)
             {
-                return NotFound();
+                return NotFound(new { msg = " Não foi possivel encontrar esta atividade" });
             }
 
             _context.Atividade.Remove(atividade);

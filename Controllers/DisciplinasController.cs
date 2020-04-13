@@ -28,18 +28,27 @@ namespace BackEnd.Controllers
         [TokenEmailFilter]
         public async Task<ActionResult<IEnumerable<Disciplina>>> GetDisciplina()
         {
-            return await _context.Disciplina.ToListAsync();
+            var result = from Disciplina in _context.Disciplina
+                         select new
+                         {
+                             id = Disciplina.IdDisciplina,
+                             descricao = Disciplina.Descricao,
+                             mateira = Disciplina.Materia,
+                             turno = Disciplina.Turno,
+                             UsuarioDisciplina = Disciplina.UsuarioDisciplina.Select(d => d.UsuarioCpf).ToList()
+                         };
+            return Ok(result);
         }
 
         // GET: api/Disciplinas/5
-        [HttpGet("{id}")]
+        [HttpGet("/api/Disciplina/{id}")]
         public async Task<ActionResult<Disciplina>> GetDisciplina(int id)
         {
             var disciplina = await _context.Disciplina.FindAsync(id);
 
             if (disciplina == null)
-            {   
-                return NotFound();
+            {
+                return NotFound(new { msg = "Não foi possível encontrar a disciplina" });
             }
 
             return disciplina;
@@ -48,14 +57,13 @@ namespace BackEnd.Controllers
         // PUT: api/Disciplinas/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
+        [HttpPut("/api/Disciplina/{id}")]
         [Authorize(Roles = "Professor,Adm")]
-        [TokenEmailFilter]
         public async Task<IActionResult> PutDisciplina(int id, Disciplina disciplina)
         {
             if (id != disciplina.IdDisciplina)
             {
-                return BadRequest();
+                return BadRequest(new { msg = "Não foi possivel encontrar a disciplina informada" });
             }
 
             _context.Entry(disciplina).State = EntityState.Modified;
@@ -68,7 +76,7 @@ namespace BackEnd.Controllers
             {
                 if (!DisciplinaExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { msg = "Não foi possível encontrar a disciplina" });
                 }
                 else
                 {
@@ -76,14 +84,16 @@ namespace BackEnd.Controllers
                 }
             }
 
-            return NoContent();
+            return StatusCode(200, new { msg = $"Disciplina {disciplina.Materia} alterada com sucesso" });
         }
 
-        // POST: api/Disciplinas
+        // POST: api/Disciplina
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        [Authorize(Roles = "Professor,Adm")]        
+        [Route("/api/Disciplina")]
+        [Authorize(Roles = "Professor,Adm")]
+        [TokenEmailFilter]
         public async Task<ActionResult<Disciplina>> PostDisciplina(Disciplina disciplina)
         {
             _context.Disciplina.Add(disciplina);
@@ -93,14 +103,15 @@ namespace BackEnd.Controllers
         }
 
         // DELETE: api/Disciplinas/5
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Professor,Adm")]        
+        [HttpDelete("/api/Disciplina/{id}")]
+        [Authorize(Roles = "Professor,Adm")]
+        [TokenEmailFilter]
         public async Task<ActionResult<Disciplina>> DeleteDisciplina(int id)
         {
             var disciplina = await _context.Disciplina.FindAsync(id);
             if (disciplina == null)
             {
-                return NotFound();
+                return NotFound(new { msg = "Não foi possível encontrar a disciplina" });
             }
 
             _context.Disciplina.Remove(disciplina);
