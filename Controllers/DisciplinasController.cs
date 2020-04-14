@@ -24,8 +24,7 @@ namespace BackEnd.Controllers
 
         // GET: api/Disciplinas
         [HttpGet("/api/Disciplina")]
-        [Authorize]
-        [TokenEmailFilter]
+        [Authorize]        
         public async Task<ActionResult<IEnumerable<Disciplina>>> GetDisciplina()
         {
             var result = from Disciplina in _context.Disciplina
@@ -92,8 +91,7 @@ namespace BackEnd.Controllers
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
         [Route("/api/Disciplina")]
-        [Authorize(Roles = "Professor,Adm")]
-        [TokenEmailFilter]
+        [Authorize(Roles = "Professor,Adm")]        
         public async Task<ActionResult<Disciplina>> PostDisciplina(Disciplina disciplina)
         {
             _context.Disciplina.Add(disciplina);
@@ -106,8 +104,7 @@ namespace BackEnd.Controllers
         // POST: api/Disciplina/InserirAluno
         [HttpPost]
         [Route("/api/Disciplina/InserirAluno")]
-        [Authorize(Roles = "Professor,Adm")]
-        [TokenEmailFilter]
+        [Authorize(Roles = "Professor,Adm")]        
         public async Task<dynamic> PostInserirAluno([FromBody] UsuarioDisciplina usuarioDisciplina)
         {
             _context.UsuarioDisciplina.Add(usuarioDisciplina);
@@ -134,8 +131,7 @@ namespace BackEnd.Controllers
 
         // DELETE: api/Disciplinas/5
         [HttpDelete("/api/Disciplina/{id}")]
-        [Authorize(Roles = "Professor,Adm")]
-        [TokenEmailFilter]
+        [Authorize(Roles = "Professor,Adm")]       
         public async Task<ActionResult<Disciplina>> DeleteDisciplina(int id)
         {
             var disciplina = await _context.Disciplina.FindAsync(id);
