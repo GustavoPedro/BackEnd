@@ -46,15 +46,16 @@ namespace BackEnd.Controllers
         }
 
         /// <summary>
-        /// Realiza a consulta de de um usuário específico sua respectiva disciplina
-        /// <returns>Retorna usuário em sua respectiva disciplina</returns>
+        /// Realiza a consulta de de um usuário específico e as disciplinas que ele pertence filtrando por email
+        /// <returns>Retorna usuário em suas disciplinas</returns>
         /// </summary>
-        [HttpGet("{IdUsuarioDisciplina}")]
+        [HttpGet("{email}")]
         [Authorize]
-        public async Task<ActionResult<object>> GetUsuarioDisciplina(int IdUsuarioDisciplina)
+        public async Task<ActionResult<object>> GetUsuarioDisciplina(string email)
         {
+            // Busca todas as disciplinas em que o usuário está
             var usuarioDisciplina = await _context.Usuario
-                .Where(usr => usr.UsuarioDisciplina.Select(usrdisc => usrdisc.IdUsuarioDisciplina).Contains(IdUsuarioDisciplina))
+                .Where(usr => usr.Email == email)
                 .Select(usr => new UsuarioDIsciplinaSearchViewModel
                 {
                     Email = usr.Email,
@@ -63,6 +64,7 @@ namespace BackEnd.Controllers
                 }
                 )
                 .FirstOrDefaultAsync();
+            
 
             if (usuarioDisciplina == null)
             {
@@ -72,9 +74,9 @@ namespace BackEnd.Controllers
             return usuarioDisciplina;
         }
 
-        // PUT: api/UsuariosDisciplinas/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Atualiza usuário em disciplina a partir do usuario na disciplina informado e do id da disciplina que se deseja trocar        
+        /// </summary>
         [HttpPut("{IdUsuarioDisciplina}")]
         [Authorize(Roles = "Professor,Adm")]
         public async Task<IActionResult> PutUsuarioDisciplina([FromQuery] int IdUsuarioDisciplina, [FromBody] int IdDisciplina)
@@ -87,7 +89,7 @@ namespace BackEnd.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuarioDisciplinaExists(IdUsuarioDisciplina))
+                if (!UsuarioDisciplinaExists(usuarioDisciplina.UsuarioCpf,IdDisciplina))
                 {
                     return NotFound(new { msg = "Usuário não encontrado na disciplina" });
                 }
@@ -100,21 +102,43 @@ namespace BackEnd.Controllers
             return StatusCode(200, new { msg = $"Usuário {usuarioDisciplina.UsuarioCpfNavigation.NomeSobrenome} alterado de disciplina com sucesso" });
         }
 
-        // POST: api/UsuariosDisciplinas
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Cadastra usuário em uma disciplina
+        /// </summary>
         [HttpPost]
         [Authorize(Roles = "Professor,Adm")]
         public async Task<ActionResult<UsuarioDisciplina>> PostUsuarioDisciplina(UsuarioDisciplinaCreateAndUpdateViewModel usuarioDisciplinaViewModel)
         {
-            UsuarioDisciplina usuarioDisciplina = _mapper.Map<UsuarioDisciplina>(usuarioDisciplinaViewModel);
-            _context.UsuarioDisciplina.Add(usuarioDisciplina);
-            await _context.SaveChangesAsync();
+            try
+            {
+                UsuarioDisciplina usuarioDisciplina = _mapper.Map<UsuarioDisciplina>(usuarioDisciplinaViewModel);
+                _context.UsuarioDisciplina.Add(usuarioDisciplina);
+                await _context.SaveChangesAsync();
+                usuarioDisciplina.UsuarioCpfNavigation = await _context.Usuario.Where(usr => usr.Cpf == usuarioDisciplina.UsuarioCpf).FirstOrDefaultAsync();
 
-            return CreatedAtAction("GetUsuarioDisciplina", new { id = usuarioDisciplina.IdUsuarioDisciplina }, usuarioDisciplina);
+                return CreatedAtAction("GetUsuarioDisciplina", new { email = usuarioDisciplina.UsuarioCpfNavigation.Email }, usuarioDisciplina);
+            }
+            catch (DbUpdateException)
+            {
+                if (UsuarioDisciplinaExists(usuarioDisciplinaViewModel.UsuarioCpf,usuarioDisciplinaViewModel.DisciplinaIdDisciplina))
+                {
+                    return Conflict(new { msg = "O usuário informado já existe na disciplina" });
+                }
+                else if (!CpfOrDisciplinaNotExists(usuarioDisciplinaViewModel.UsuarioCpf, usuarioDisciplinaViewModel.DisciplinaIdDisciplina))
+                {
+                    return BadRequest(new { msg = "O usuário ou disciplina informada não existe" });
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
         }
 
-        // DELETE: api/UsuariosDisciplinas/5
+        /// <summary>
+        /// Deleta usuário de uma disciplina
+        /// </summary>
         [HttpDelete("{IdUsuarioDisciplina}")]
         [Authorize(Roles = "Professor,Adm")]
         public async Task<ActionResult<UsuarioDisciplina>> DeleteUsuarioDisciplina(int IdUsuarioDisciplina)
@@ -131,9 +155,23 @@ namespace BackEnd.Controllers
             return usuarioDisciplina;
         }
 
-        private bool UsuarioDisciplinaExists(int id)
+        private bool UsuarioDisciplinaExists(string cpf,int idDisciplina)
         {
-            return _context.UsuarioDisciplina.Any(e => e.IdUsuarioDisciplina == id);
+            return _context.UsuarioDisciplina.Any(e => e.UsuarioCpf == cpf && e.DisciplinaIdDisciplina == idDisciplina);
+        }
+
+        private bool CpfOrDisciplinaNotExists(string cpf, int idDisciplina)
+        {
+            bool exists = true;
+            if (!_context.Usuario.Any(usrdisc => usrdisc.Cpf == cpf)) 
+            {
+                exists = false;
+            }
+            if (!_context.Disciplina.Any(usrdisc => usrdisc.IdDisciplina == idDisciplina))
+            {
+                exists = false;
+            }
+            return exists;
         }
     }
 }

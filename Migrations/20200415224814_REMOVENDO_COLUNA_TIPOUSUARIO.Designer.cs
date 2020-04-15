@@ -3,14 +3,16 @@ using System;
 using BackEnd.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200415224814_REMOVENDO_COLUNA_TIPOUSUARIO")]
+    partial class REMOVENDO_COLUNA_TIPOUSUARIO
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -267,9 +269,6 @@ namespace BackEnd.Migrations
 
                     b.HasIndex("UsuarioCpf")
                         .HasName("fk_Usuario_has_Disciplina_Usuario1_idx");
-
-                    b.HasIndex("UsuarioCpf", "DisciplinaIdDisciplina")
-                        .IsUnique();
 
                     b.ToTable("usuario_disciplina");
                 });

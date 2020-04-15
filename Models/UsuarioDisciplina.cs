@@ -12,8 +12,7 @@ namespace BackEnd.Models
 
         public int IdUsuarioDisciplina { get; set; }
         public string UsuarioCpf { get; set; }
-        public int DisciplinaIdDisciplina { get; set; }
-        public string TipoUsuario { get; set; }
+        public int DisciplinaIdDisciplina { get; set; }        
 
         public virtual Disciplina DisciplinaIdDisciplinaNavigation { get; set; }
         public virtual Usuario UsuarioCpfNavigation { get; set; }

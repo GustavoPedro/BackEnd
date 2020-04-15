@@ -268,6 +268,9 @@ namespace BackEnd.Models
 
             modelBuilder.Entity<UsuarioDisciplina>(entity =>
             {
+                entity.HasIndex(e => new { e.UsuarioCpf, e.DisciplinaIdDisciplina })
+                .IsUnique(true);
+
                 entity.HasKey(e => e.IdUsuarioDisciplina)
                     .HasName("PRIMARY");
 
@@ -286,14 +289,7 @@ namespace BackEnd.Models
                 entity.Property(e => e.DisciplinaIdDisciplina)
                     .HasColumnName("disciplina_idDisciplina")
                     .HasColumnType("int(11)");
-
-                entity.Property(e => e.TipoUsuario)
-                    .IsRequired()
-                    .HasColumnName("tipoUsuario")
-                    .HasColumnType("enum('Aluno','Professor','Responsavel','Adm')")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
+             
                 entity.Property(e => e.UsuarioCpf)
                     .IsRequired()
                     .HasColumnName("usuario_cpf")
