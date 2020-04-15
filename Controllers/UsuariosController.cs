@@ -61,23 +61,7 @@ namespace BackEnd.Controllers
         /// </summary>
         /// <returns>Retorna todos usuário filtrando por nome</returns>
         /// 
-        public static string ConvertToUpperCase(string input)
-        {
-            string output = "";
-            for (int i  = 0; i < input.Length; i++)
-            {
-                if (input[i] >= 'A' && input[i] <= 'Z')
-                {
-                    output +=(char) (input[i] -'A' + 'a');
-                }
-                else
-                {
-                    output += input[i];
-                }
-            }
-            return output;
-        }
-
+     
         [HttpGet("/api/Usuarios/{nomeSobrenome}")]
         [Authorize]
         public async Task<ActionResult<object>> GetUsuarioNome(string nomeSobrenome)
@@ -163,6 +147,7 @@ namespace BackEnd.Controllers
         [Route("signup")]
         public async Task<dynamic> PostUsuario([FromBody] UsuarioViewModel usuarioViewModel)
         {
+            usuarioViewModel.Cpf = usuarioViewModel.Cpf.Replace("-", "").Replace(".","");
             Usuario usuario = _mapper.Map<Usuario>(usuarioViewModel);
             _context.Usuario.Add(usuario);
             try

@@ -86,6 +86,7 @@ namespace BackEnd
             var config = new AutoMapper.MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<UsuarioViewModel, Usuario>();
+                cfg.CreateMap<UsuarioDisciplinaCreateAndUpdateViewModel, UsuarioDisciplina>();
             });
 
             IMapper mapper = config.CreateMapper();
