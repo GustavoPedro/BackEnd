@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Models;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using BackEnd.ViewModel.Atividade;
 
 namespace BackEnd.Controllers
 {
@@ -15,10 +17,12 @@ namespace BackEnd.Controllers
     public class AtividadesController : ControllerBase
     {
         private readonly DatabaseContext _context;
+        private readonly IMapper _mapper;
 
-        public AtividadesController(DatabaseContext context)
+        public AtividadesController(DatabaseContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Atividades
@@ -78,10 +82,12 @@ namespace BackEnd.Controllers
         // POST: api/Atividades
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost("/api/Atividades")]
+        [HttpPost]
+        [Route("/api/Atividades")]
         [Authorize(Roles = "Professor,Adm")]
-        public async Task<ActionResult<Atividade>> PostAtividade(Atividade atividade)
+        public async Task<dynamic> PostAtividades([FromBody] AtividadeViewModel model)
         {
+            Atividade atividade = _mapper.Map<Atividade>(model);
             _context.Atividade.Add(atividade);
 
             try
@@ -92,15 +98,16 @@ namespace BackEnd.Controllers
             {
                 if (AtividadeExists(atividade.IdAtividade))
                 {
-                    return Conflict(new { msg = "Esta atividade já está cadastrada no sistema!" });
+                    return Conflict(new { msg = "Esta atividade já está cadastrada" });
                 }
-
                 else
                 {
                     throw;
                 }
             }
-            return CreatedAtAction("GetAtividade", new { id = atividade.IdAtividade }, atividade);
+
+            CreatedAtAction("GetAtividade", new { id = atividade.IdAtividade }, atividade);
+            return StatusCode(200, new { msg = $"Atividade de {atividade.Atividade1} cadastrada com sucesso" });
         }
 
         // DELETE: api/Atividades/5

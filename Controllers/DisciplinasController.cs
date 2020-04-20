@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using BackEnd.Models;
 using BackEnd.Filters;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using BackEnd.ViewModel.Disciplinas;
+using BackEnd.ViewModel;
 
 namespace BackEnd.Controllers
 {
@@ -16,10 +19,12 @@ namespace BackEnd.Controllers
     public class DisciplinasController : ControllerBase
     {
         private readonly DatabaseContext _context;
+        private readonly IMapper _mapper;
 
-        public DisciplinasController(DatabaseContext context)
+        public DisciplinasController(DatabaseContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Disciplinas
@@ -86,16 +91,35 @@ namespace BackEnd.Controllers
             return StatusCode(200, new { msg = $"Disciplina {disciplina.Materia} alterada com sucesso" });
         }
 
-        // POST: api/Disciplina
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        /// <summary>
+        /// Realiza o cadastro de uma disciplina
+        /// </summary>
+        /// <returns>Disciplina cadastrada</returns>
+        /// <returns>Conflito caso IdDisciplina já exista</returns>
+
         [HttpPost]
         [Route("/api/Disciplina")]
-        [Authorize(Roles = "Professor,Adm")]        
-        public async Task<ActionResult<Disciplina>> PostDisciplina(Disciplina disciplina)
+        [Authorize(Roles = "Professor,Adm")]
+        [TokenEmailFilter]
+        public async Task<dynamic> PostDisciplina([FromBody] DisciplinaViewModel model)
         {
+            Disciplina disciplina = _mapper.Map<Disciplina>(model);
             _context.Disciplina.Add(disciplina);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (DisciplinaExists(disciplina.IdDisciplina))
+                {
+                    return Conflict(new { message = "Esta disciplina já existe" });
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return CreatedAtAction("GetDisciplina", new { id = disciplina.IdDisciplina }, disciplina);
         }
@@ -104,9 +128,11 @@ namespace BackEnd.Controllers
         // POST: api/Disciplina/InserirAluno
         [HttpPost]
         [Route("/api/Disciplina/InserirAluno")]
-        [Authorize(Roles = "Professor,Adm")]        
-        public async Task<dynamic> PostInserirAluno([FromBody] UsuarioDisciplina usuarioDisciplina)
+        [Authorize(Roles = "Professor,Adm")]
+        [TokenEmailFilter]
+        public async Task<dynamic> PostInserirAluno([FromBody] UsuarioDisciplinaCreateAndUpdateViewModel model)
         {
+            UsuarioDisciplina usuarioDisciplina = _mapper.Map<UsuarioDisciplina>(model);
             _context.UsuarioDisciplina.Add(usuarioDisciplina);
 
             try
@@ -115,7 +141,7 @@ namespace BackEnd.Controllers
             }
             catch (DbUpdateException)
             {
-                if(!DisciplinaExists(usuarioDisciplina.DisciplinaIdDisciplina))
+                if (!DisciplinaExists(usuarioDisciplina.DisciplinaIdDisciplina))
                 {
                     return NotFound(new { msg = "Não foi possível encontrar a disciplina" });
                 }

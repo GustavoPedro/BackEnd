@@ -24,6 +24,9 @@ using System.IO;
 using BackEnd.ViewModel;
 using AutoMapper;
 using BackEnd.Filters;
+using BackEnd.ViewModel.Atividade;
+using BackEnd.ViewModel.Escola;
+using BackEnd.ViewModel.Disciplinas;
 
 namespace BackEnd
 {
@@ -87,6 +90,9 @@ namespace BackEnd
             {
                 cfg.CreateMap<UsuarioViewModel, Usuario>();
                 cfg.CreateMap<UsuarioDisciplinaCreateAndUpdateViewModel, UsuarioDisciplina>();
+                cfg.CreateMap<DisciplinaViewModel, Disciplina>();
+                cfg.CreateMap<AtividadeViewModel, Atividade>();
+                cfg.CreateMap<EscolaViewModel, Escola>();
             });
 
             IMapper mapper = config.CreateMapper();

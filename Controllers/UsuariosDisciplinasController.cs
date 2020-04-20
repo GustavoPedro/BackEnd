@@ -111,10 +111,14 @@ namespace BackEnd.Controllers
         {
             try
             {
+
                 UsuarioDisciplina usuarioDisciplina = _mapper.Map<UsuarioDisciplina>(usuarioDisciplinaViewModel);
                 _context.UsuarioDisciplina.Add(usuarioDisciplina);
+
                 await _context.SaveChangesAsync();
+
                 usuarioDisciplina.UsuarioCpfNavigation = await _context.Usuario.Where(usr => usr.Cpf == usuarioDisciplina.UsuarioCpf).FirstOrDefaultAsync();
+
 
                 return CreatedAtAction("GetUsuarioDisciplina", new { email = usuarioDisciplina.UsuarioCpfNavigation.Email }, usuarioDisciplina);
             }

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Models;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using BackEnd.ViewModel.Escola;
 
 namespace BackEnd.Controllers
 {
@@ -15,10 +17,12 @@ namespace BackEnd.Controllers
     public class EscolasController : ControllerBase
     {
         private readonly DatabaseContext _context;
+        private readonly IMapper _mapper;
 
-        public EscolasController(DatabaseContext context)
+        public EscolasController(DatabaseContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }      
 
         // GET: api/Escolas/5
@@ -85,12 +89,14 @@ namespace BackEnd.Controllers
         /// <summary>
         /// Realiza o cadastro de uma escola
         /// </summary>
-        
+
         [HttpPost]
         [Authorize(Roles = "Adm")]
-        public async Task<ActionResult<Escola>> PostEscola(Escola escola)
+        public async Task<dynamic> PostEscola([FromBody] EscolaViewModel model)
         {
+            Escola escola = _mapper.Map<Escola>(model);
             _context.Escola.Add(escola);
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -107,7 +113,8 @@ namespace BackEnd.Controllers
                 }
             }
 
-            return CreatedAtAction("GetEscola", new { id = escola.Cnpj }, escola);
+            CreatedAtAction("GetEscola", new { id = escola.Cnpj }, escola);
+            return StatusCode(200, new { msg = $"Escola {escola.Nome} cadastrada com sucesso" });
         }
 
         // DELETE: api/Escolas/5
