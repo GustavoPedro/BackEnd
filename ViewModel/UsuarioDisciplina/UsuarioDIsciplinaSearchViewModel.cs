@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace BackEnd.ViewModel
 {
-    public class UsuarioDIsciplinaSearchViewModel
+    public class UsuarioDisciplinaSearchViewModel
     {
         public string Nome { get; set; }
         public string Email { get; set; }
+
+        public string Tipo { get; set; }
         public List<Disciplina> Disciplinas { get; set; }
     }
 }

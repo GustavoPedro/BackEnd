@@ -31,11 +31,11 @@ namespace BackEnd.Controllers
         /// <returns>Retorna usuários em suas disciplinas</returns>
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<UsuarioDIsciplinaSearchViewModel>>> GetUsuariosDisciplinas()
+        public async Task<ActionResult<IEnumerable<UsuarioDisciplinaSearchViewModel>>> GetUsuariosDisciplinas()
         {
             
             return await _context.Usuario
-                    .Select(usr => new UsuarioDIsciplinaSearchViewModel
+                    .Select(usr => new UsuarioDisciplinaSearchViewModel
                     {
                         Email = usr.Email,
                         Nome = usr.NomeSobrenome,
@@ -56,7 +56,7 @@ namespace BackEnd.Controllers
             // Busca todas as disciplinas em que o usuário está
             var usuarioDisciplina = await _context.Usuario
                 .Where(usr => usr.Email == email)
-                .Select(usr => new UsuarioDIsciplinaSearchViewModel
+                .Select(usr => new UsuarioDisciplinaSearchViewModel
                 {
                     Email = usr.Email,
                     Nome = usr.NomeSobrenome,

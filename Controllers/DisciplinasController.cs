@@ -42,7 +42,7 @@ namespace BackEnd.Controllers
                              professorResponsavel = Disciplina.UsuarioDisciplina.Where(usrdisc => usrdisc.UsuarioCpfNavigation.TipoUsuario == "Professor")
                              .Select(usr => usr.UsuarioCpfNavigation.NomeSobrenome).FirstOrDefault(),
                              UsuarioDisciplina = _context.UsuarioDisciplina
-                                                 .Where(usr => usr.DisciplinaIdDisciplina == Disciplina.IdDisciplina)
+                                                 .Where(usr => usr.DisciplinaIdDisciplina == Disciplina.IdDisciplina && usr.UsuarioCpfNavigation.TipoUsuario == "Aluno")
                                                  .Include(usrdisc => usrdisc.UsuarioCpfNavigation)
                                                  .Select(usrdisc => new { Nome = usrdisc.UsuarioCpfNavigation.NomeSobrenome, Cpf = usrdisc.UsuarioCpf, Tipo = usrdisc.UsuarioCpfNavigation.TipoUsuario })
                                                  .ToList()                           

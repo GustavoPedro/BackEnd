@@ -135,7 +135,19 @@ namespace BackEnd.Controllers
             return StatusCode(200,new {msg = $"Usuário {usuario.NomeSobrenome} alterado com sucesso" });
         }
 
+        [HttpGet]
+        [Authorize]
+        [Route("api/Alunos")]
+        public async Task<ActionResult<List<Usuario>>> getAlunos(){
+            return await _context.Usuario.Where(usr => usr.TipoUsuario== "Aluno").ToListAsync();
+        } 
 
+        [HttpGet]
+        [Authorize]
+        [Route("api/Professores")]
+        public async Task<ActionResult<List<Usuario>>> getProfessores(){
+            return await _context.Usuario.Where(usr => usr.TipoUsuario== "Professor").ToListAsync();
+        } 
         /// <summary>
         /// Realiza o cadastro de usuário
         /// </summary>
