@@ -40,11 +40,14 @@ namespace BackEnd.Controllers
                              mateira = Disciplina.Materia,
                              turno = Disciplina.Turno,
                              professorResponsavel = Disciplina.UsuarioDisciplina.Where(usrdisc => usrdisc.UsuarioCpfNavigation.TipoUsuario == "Professor")
-                             .Select(usr => usr.UsuarioCpfNavigation.NomeSobrenome).FirstOrDefault(),
+                             .Select(usr => new {
+                                 NomeSobrenome = usr.UsuarioCpfNavigation.NomeSobrenome,
+                                 Cpf = usr.UsuarioCpfNavigation.Cpf
+                             }).FirstOrDefault(),
                              UsuarioDisciplina = _context.UsuarioDisciplina
                                                  .Where(usr => usr.DisciplinaIdDisciplina == Disciplina.IdDisciplina && usr.UsuarioCpfNavigation.TipoUsuario == "Aluno")
                                                  .Include(usrdisc => usrdisc.UsuarioCpfNavigation)
-                                                 .Select(usrdisc => new { Nome = usrdisc.UsuarioCpfNavigation.NomeSobrenome, Cpf = usrdisc.UsuarioCpf, Tipo = usrdisc.UsuarioCpfNavigation.TipoUsuario })
+                                                 .Select(usrdisc => new { NomeSobrenome = usrdisc.UsuarioCpfNavigation.NomeSobrenome, Cpf = usrdisc.UsuarioCpf, TipoUsuario = usrdisc.UsuarioCpfNavigation.TipoUsuario })
                                                  .ToList()                           
                          };
             return Ok(result);
