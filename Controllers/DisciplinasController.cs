@@ -169,6 +169,7 @@ namespace BackEnd.Controllers
         [Authorize(Roles = "Professor,Adm")]       
         public async Task<ActionResult<Disciplina>> DeleteDisciplina(int id)
         {
+            try{
             var disciplina = await _context.Disciplina.FindAsync(id);
             if (disciplina == null)
             {
@@ -179,6 +180,9 @@ namespace BackEnd.Controllers
             await _context.SaveChangesAsync();
 
             return disciplina;
+            }catch(DbUpdateException){
+                return BadRequest("Não é possível deletar disciplinas que possuem alunos nela");
+            }
         }
 
         private bool DisciplinaExists(int id)
