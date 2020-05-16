@@ -29,7 +29,7 @@ namespace BackEnd.Controllers
 
         // GET: api/Disciplinas
         [HttpGet("/api/Disciplina")]
-        [Authorize]        
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Disciplina>>> GetDisciplina()
         {
             var result = from Disciplina in _context.Disciplina
@@ -40,7 +40,8 @@ namespace BackEnd.Controllers
                              mateira = Disciplina.Materia,
                              turno = Disciplina.Turno,
                              professorResponsavel = Disciplina.UsuarioDisciplina.Where(usrdisc => usrdisc.UsuarioCpfNavigation.TipoUsuario == "Professor")
-                             .Select(usr => new {
+                             .Select(usr => new
+                             {
                                  NomeSobrenome = usr.UsuarioCpfNavigation.NomeSobrenome,
                                  Cpf = usr.UsuarioCpfNavigation.Cpf
                              }).FirstOrDefault(),
@@ -48,7 +49,7 @@ namespace BackEnd.Controllers
                                                  .Where(usr => usr.DisciplinaIdDisciplina == Disciplina.IdDisciplina && usr.UsuarioCpfNavigation.TipoUsuario == "Aluno")
                                                  .Include(usrdisc => usrdisc.UsuarioCpfNavigation)
                                                  .Select(usrdisc => new { NomeSobrenome = usrdisc.UsuarioCpfNavigation.NomeSobrenome, Cpf = usrdisc.UsuarioCpf, TipoUsuario = usrdisc.UsuarioCpfNavigation.TipoUsuario })
-                                                 .ToList()                           
+                                                 .ToList()
                          };
             return Ok(result);
         }
@@ -112,7 +113,18 @@ namespace BackEnd.Controllers
         [TokenEmailFilter]
         public async Task<dynamic> PostDisciplina([FromBody] DisciplinaViewModel model)
         {
+            ICollection<UsuarioDisciplina> usuarioDisciplina = new List<UsuarioDisciplina>();
+            if (model.UsuarioDisciplina != null)
+            {
+                foreach (var item in model.UsuarioDisciplina)
+                {
+                    usuarioDisciplina.Add(_mapper.Map<UsuarioDisciplina>(item));
+                }
+            }
+
+            _mapper.Map<ICollection<UsuarioDisciplina>>(model.UsuarioDisciplina);
             Disciplina disciplina = _mapper.Map<Disciplina>(model);
+            disciplina.UsuarioDisciplina = usuarioDisciplina;
             _context.Disciplina.Add(disciplina);
             try
             {
@@ -166,21 +178,24 @@ namespace BackEnd.Controllers
 
         // DELETE: api/Disciplinas/5
         [HttpDelete("/api/Disciplina/{id}")]
-        [Authorize(Roles = "Professor,Adm")]       
+        [Authorize(Roles = "Professor,Adm")]
         public async Task<ActionResult<Disciplina>> DeleteDisciplina(int id)
         {
-            try{
-            var disciplina = await _context.Disciplina.FindAsync(id);
-            if (disciplina == null)
+            try
             {
-                return NotFound(new { msg = "Não foi possível encontrar a disciplina" });
+                var disciplina = await _context.Disciplina.FindAsync(id);
+                if (disciplina == null)
+                {
+                    return NotFound(new { msg = "Não foi possível encontrar a disciplina" });
+                }
+
+                _context.Disciplina.Remove(disciplina);
+                await _context.SaveChangesAsync();
+
+                return disciplina;
             }
-
-            _context.Disciplina.Remove(disciplina);
-            await _context.SaveChangesAsync();
-
-            return disciplina;
-            }catch(DbUpdateException){
+            catch (DbUpdateException)
+            {
                 return BadRequest("Não é possível deletar disciplinas que possuem alunos nela");
             }
         }

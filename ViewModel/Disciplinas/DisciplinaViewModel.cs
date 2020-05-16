@@ -11,5 +11,7 @@ namespace BackEnd.ViewModel.Disciplinas
         public string Descricao { get; set; }
         public string Materia { get; set; }
         public string Turno { get; set; }
+
+        public virtual ICollection<UsuarioDisciplinaCreateAndUpdateViewModel> UsuarioDisciplina { get; set; }
     }
 }

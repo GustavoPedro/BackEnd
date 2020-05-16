@@ -143,11 +143,11 @@ namespace BackEnd.Controllers
         /// <summary>
         /// Deleta usuário de uma disciplina
         /// </summary>
-        [HttpDelete("{IdUsuarioDisciplina}")]
+        [HttpDelete()]
         [Authorize(Roles = "Professor,Adm")]
-        public async Task<ActionResult<UsuarioDisciplina>> DeleteUsuarioDisciplina(int IdUsuarioDisciplina)
+        public async Task<ActionResult<UsuarioDisciplina>> DeleteUsuarioDisciplina(string cpf,int id)
         {
-            var usuarioDisciplina = await _context.UsuarioDisciplina.FindAsync(IdUsuarioDisciplina);
+            var usuarioDisciplina = await _context.UsuarioDisciplina.Where(usr => usr.UsuarioCpf == cpf && usr.DisciplinaIdDisciplina == id).FirstOrDefaultAsync();
             if (usuarioDisciplina == null)
             {
                 return NotFound(new { msg = "Usuário não encontrado na disciplina" });

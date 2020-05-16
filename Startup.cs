@@ -58,7 +58,7 @@ namespace BackEnd
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api PI", Version = "v1",Description = "Aplicação de gestão comportamental dos alunos",Contact = new OpenApiContact {Email= "https://github.com/GustavoPedro/BackEnd", Name="Gustavo, Fabricio e Fernando"} });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api PI", Version = "v1", Description = "Aplicaï¿½ï¿½o de gestï¿½o comportamental dos alunos", Contact = new OpenApiContact { Email = "https://github.com/GustavoPedro/BackEnd", Name = "Gustavo, Fabricio e Fernando" } });
                 string caminhoAplicacao =
                  PlatformServices.Default.Application.ApplicationBasePath;
                 string nomeAplicacao =
@@ -70,7 +70,8 @@ namespace BackEnd
             });
 
             var key = Encoding.ASCII.GetBytes(Settings.Secret);
-            services.AddAuthentication(x => {
+            services.AddAuthentication(x =>
+            {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(x =>
@@ -92,7 +93,7 @@ namespace BackEnd
                 cfg.CreateMap<UsuarioDisciplinaCreateAndUpdateViewModel, UsuarioDisciplina>();
                 cfg.CreateMap<DisciplinaViewModel, Disciplina>();
                 cfg.CreateMap<AtividadeViewModel, Atividade>();
-                cfg.CreateMap<EscolaViewModel, Escola>();
+                cfg.CreateMap<EscolaViewModel, Escola>();               
             });
 
             IMapper mapper = config.CreateMapper();
@@ -116,7 +117,7 @@ namespace BackEnd
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }           
+            }
 
             app.UseRouting();
 
