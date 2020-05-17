@@ -73,15 +73,31 @@ namespace BackEnd.Controllers
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("/api/Disciplina/{id}")]
         [Authorize(Roles = "Professor,Adm")]
-        public async Task<IActionResult> PutDisciplina(int id, Disciplina disciplina)
+        public async Task<IActionResult> PutDisciplina(int id, DisciplinaViewModel model)
         {
-            if (id != disciplina.IdDisciplina)
+            var existingParent = _context.Disciplina
+                                .Where(p => p.IdDisciplina == id)
+                                .Include(p => p.UsuarioDisciplina)
+                                .SingleOrDefault();
+
+            if (existingParent != null)
             {
-                return BadRequest(new { msg = "Não foi possivel encontrar a disciplina informada" });
+                // Update parent
+                _context.Entry(existingParent).CurrentValues.SetValues(model);
+                foreach (var existingChild in existingParent.UsuarioDisciplina.ToList())
+                {
+                    if (!model.UsuarioDisciplina.Any(c => c.DisciplinaIdDisciplina == existingChild.DisciplinaIdDisciplina && c.UsuarioCpf == existingChild.UsuarioCpf))
+                        _context.UsuarioDisciplina.Remove(existingChild);
+                }
+                foreach (var childModel in model.UsuarioDisciplina)
+                {
+                    if (!_context.UsuarioDisciplina.Any(usr => usr.DisciplinaIdDisciplina == childModel.DisciplinaIdDisciplina && usr.UsuarioCpf == childModel.UsuarioCpf))
+                    {
+                        UsuarioDisciplina usrDisc = _mapper.Map<UsuarioDisciplina>(childModel);
+                        existingParent.UsuarioDisciplina.Add(usrDisc);
+                    }
+                }
             }
-
-            _context.Entry(disciplina).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -98,7 +114,7 @@ namespace BackEnd.Controllers
                 }
             }
 
-            return StatusCode(200, new { msg = $"Disciplina {disciplina.Materia} alterada com sucesso" });
+            return StatusCode(200, new { msg = $"Disciplina {existingParent.Materia} alterada com sucesso" });
         }
 
         /// <summary>
