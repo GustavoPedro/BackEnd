@@ -9,6 +9,7 @@ using BackEnd.Models;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using BackEnd.ViewModel.Atividade;
+using BackEnd.ViewModel.AtividadeUsuarioDisciplina;
 
 namespace BackEnd.Controllers
 {
@@ -79,6 +80,8 @@ namespace BackEnd.Controllers
             return StatusCode(200, new { msg = $"Atividade {atividade.Atividade1} alterada com sucesso" });
         }
 
+        [HttpPut("/api/Atividades/t")]
+
         // POST: api/Atividades
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
@@ -109,6 +112,8 @@ namespace BackEnd.Controllers
             CreatedAtAction("GetAtividade", new { id = atividade.IdAtividade }, atividade);
             return StatusCode(200, new { msg = $"Atividade de {atividade.Atividade1} cadastrada com sucesso" });
         }
+
+
 
         // DELETE: api/Atividades/5
         [HttpDelete("/api/Atividades/{id}")]
