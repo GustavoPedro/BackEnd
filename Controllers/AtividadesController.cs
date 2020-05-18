@@ -105,12 +105,12 @@ namespace BackEnd.Controllers
                 }
                 else
                 {
-                    throw;
+                    return BadRequest(new { msg = "Ocorreu um erro inesperado" });
                 }
             }
 
             CreatedAtAction("GetAtividade", new { id = atividade.IdAtividade }, atividade);
-            return StatusCode(200, new { msg = $"Atividade de {atividade.Atividade1} cadastrada com sucesso" });
+            return StatusCode(200, new { msg = $"Atividade {atividade.Atividade1} cadastrada com sucesso" });
         }
 
 
@@ -128,7 +128,7 @@ namespace BackEnd.Controllers
             _context.Atividade.Remove(atividade);
             await _context.SaveChangesAsync();
 
-            return atividade;
+            return StatusCode(200,new {msg="Atividade deletada com sucesso",atividade = atividade});
         }
 
         private bool AtividadeExists(int id)

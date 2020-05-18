@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BackEnd.Migrations
 {
-    public partial class Initial : Migration
+    public partial class AtividadeTable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
-        {           
+        {
             migrationBuilder.CreateTable(
                 name: "atividade",
                 columns: table => new
                 {
-                    idAtividade = table.Column<int>(type: "int(11)", nullable: false)
+                    idAtividade = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     descricao = table.Column<string>(type: "text", nullable: true)
                         .Annotation("MySql:CharSet", "utf8")
@@ -21,6 +21,19 @@ namespace BackEnd.Migrations
                         .Annotation("MySql:CharSet", "utf8")
                         .Annotation("MySql:Collation", "utf8_general_ci"),
                     valor = table.Column<string>(type: "enum('Muito bom','Bom','Regular','Ruim','Muito ruim')", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8")
+                        .Annotation("MySql:Collation", "utf8_general_ci"),
+                    statusAtividade = table.Column<string>(type: "enum('Pendente','Em andamento')", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8")
+                        .Annotation("MySql:Collation", "utf8_general_ci"),
+                    dataEntrega = table.Column<DateTime>(type: "date", nullable: false),
+                    tipoAtividade = table.Column<string>(type: "varchar(45)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8")
+                        .Annotation("MySql:Collation", "utf8_general_ci"),
+                    Premiacao = table.Column<string>(type: "varchar(45)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8")
+                        .Annotation("MySql:Collation", "utf8_general_ci"),
+                    MoralAtividade = table.Column<string>(type: "varchar(45)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8")
                         .Annotation("MySql:Collation", "utf8_general_ci")
                 },
@@ -33,7 +46,7 @@ namespace BackEnd.Migrations
                 name: "disciplina",
                 columns: table => new
                 {
-                    idDisciplina = table.Column<int>(type: "int(11)", nullable: false)
+                    idDisciplina = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     descricao = table.Column<string>(type: "text", nullable: true)
                         .Annotation("MySql:CharSet", "utf8")
@@ -73,10 +86,10 @@ namespace BackEnd.Migrations
                 name: "disciplina_atividade",
                 columns: table => new
                 {
-                    idDisciplina_atividade = table.Column<int>(type: "int(11)", nullable: false)
+                    idDisciplina_atividade = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    disciplina_idDisciplina = table.Column<int>(type: "int(11)", nullable: false),
-                    atividade_idAtividade = table.Column<int>(type: "int(11)", nullable: false)
+                    disciplina_idDisciplina = table.Column<int>(nullable: false),
+                    atividade_idAtividade = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -137,12 +150,12 @@ namespace BackEnd.Migrations
                 name: "usuario_disciplina",
                 columns: table => new
                 {
-                    idUsuario_Disciplina = table.Column<int>(type: "int(11)", nullable: false)
+                    idUsuario_Disciplina = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     usuario_cpf = table.Column<string>(type: "varchar(20)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8")
                         .Annotation("MySql:Collation", "utf8_general_ci"),
-                    disciplina_idDisciplina = table.Column<int>(type: "int(11)", nullable: false),
+                    disciplina_idDisciplina = table.Column<int>(nullable: false),
                     tipoUsuario = table.Column<string>(type: "enum('Aluno','Professor','Responsavel','Adm')", nullable: false)
                         .Annotation("MySql:CharSet", "utf8")
                         .Annotation("MySql:Collation", "utf8_general_ci")
@@ -165,29 +178,44 @@ namespace BackEnd.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "pontuacao",
+                name: "atividade_usuario_disciplina",
                 columns: table => new
                 {
-                    idPontuacao = table.Column<int>(type: "int(11)", nullable: false)
+                    idAtividade_disciplina = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    pontuacao = table.Column<string>(type: "varchar(30)", nullable: false)
+                    atividade_idAtividade = table.Column<int>(nullable: false),
+                    usuario_disciplina_idUsuario_Disciplina = table.Column<int>(nullable: false),
+                    status = table.Column<string>(type: "enum('Pendente','Entregue','Atrasado')", nullable: false)
                         .Annotation("MySql:CharSet", "utf8")
                         .Annotation("MySql:Collation", "utf8_general_ci"),
-                    descricao = table.Column<string>(type: "text", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8")
-                        .Annotation("MySql:Collation", "utf8_general_ci"),
-                    pontuacao_usuario_disciplina = table.Column<int>(type: "int(11)", nullable: false)
+                    total = table.Column<double>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PRIMARY", x => x.idPontuacao);
+                    table.PrimaryKey("PRIMARY", x => x.idAtividade_disciplina);
                     table.ForeignKey(
-                        name: "fk_Pontuacao_Usuario_Disciplina1",
-                        column: x => x.pontuacao_usuario_disciplina,
+                        name: "fk_atividade_has_usuario_disciplina_atividade1",
+                        column: x => x.atividade_idAtividade,
+                        principalTable: "atividade",
+                        principalColumn: "idAtividade",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "fk_atividade_has_usuario_disciplina_usuario_disciplina1",
+                        column: x => x.usuario_disciplina_idUsuario_Disciplina,
                         principalTable: "usuario_disciplina",
                         principalColumn: "idUsuario_Disciplina",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "fk_atividade_has_usuario_disciplina_atividade1_idx",
+                table: "atividade_usuario_disciplina",
+                column: "atividade_idAtividade");
+
+            migrationBuilder.CreateIndex(
+                name: "fk_atividade_has_usuario_disciplina_usuario_disciplina1_idx",
+                table: "atividade_usuario_disciplina",
+                column: "usuario_disciplina_idUsuario_Disciplina");
 
             migrationBuilder.CreateIndex(
                 name: "fk_Disciplina_has_Atividade_Atividade1_idx",
@@ -204,11 +232,6 @@ namespace BackEnd.Migrations
                 table: "escola",
                 column: "telefone",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "fk_Pontuacao_Usuario_Disciplina1_idx",
-                table: "pontuacao",
-                column: "pontuacao_usuario_disciplina");
 
             migrationBuilder.CreateIndex(
                 name: "email_UNIQUE",
@@ -235,16 +258,16 @@ namespace BackEnd.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "atividade_usuario_disciplina");
+
+            migrationBuilder.DropTable(
                 name: "disciplina_atividade");
 
             migrationBuilder.DropTable(
-                name: "pontuacao");
+                name: "usuario_disciplina");
 
             migrationBuilder.DropTable(
                 name: "atividade");
-
-            migrationBuilder.DropTable(
-                name: "usuario_disciplina");
 
             migrationBuilder.DropTable(
                 name: "disciplina");

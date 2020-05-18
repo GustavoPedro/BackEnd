@@ -22,7 +22,7 @@ namespace BackEnd.Migrations
                     b.Property<int>("IdAtividade")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("idAtividade")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.Property<string>("Atividade1")
                         .IsRequired()
@@ -31,18 +31,44 @@ namespace BackEnd.Migrations
                         .HasAnnotation("MySql:CharSet", "utf8")
                         .HasAnnotation("MySql:Collation", "utf8_general_ci");
 
+                    b.Property<DateTime>("DataEntrega")
+                        .HasColumnName("dataEntrega")
+                        .HasColumnType("date");
+
                     b.Property<string>("Descricao")
                         .HasColumnName("descricao")
                         .HasColumnType("text")
                         .HasAnnotation("MySql:CharSet", "utf8")
                         .HasAnnotation("MySql:Collation", "utf8_general_ci");
 
-                    b.Property<string>("Valor")
+                    b.Property<string>("MoralAtividade")
                         .IsRequired()
-                        .HasColumnName("valor")
-                        .HasColumnType("enum('Muito bom','Bom','Regular','Ruim','Muito ruim')")
+                        .HasColumnType("varchar(45)")
                         .HasAnnotation("MySql:CharSet", "utf8")
                         .HasAnnotation("MySql:Collation", "utf8_general_ci");
+
+                    b.Property<string>("Premiacao")
+                        .IsRequired()
+                        .HasColumnType("varchar(45)")
+                        .HasAnnotation("MySql:CharSet", "utf8")
+                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+
+                    b.Property<string>("StatusAtividade")
+                        .IsRequired()
+                        .HasColumnName("statusAtividade")
+                        .HasColumnType("enum('Pendente','Em andamento')")
+                        .HasAnnotation("MySql:CharSet", "utf8")
+                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+
+                    b.Property<string>("TipoAtividade")
+                        .IsRequired()
+                        .HasColumnName("tipoAtividade")
+                        .HasColumnType("varchar(45)")
+                        .HasAnnotation("MySql:CharSet", "utf8")
+                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+
+                    b.Property<decimal>("Valor")
+                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("IdAtividade")
                         .HasName("PRIMARY");
@@ -50,12 +76,50 @@ namespace BackEnd.Migrations
                     b.ToTable("atividade");
                 });
 
+            modelBuilder.Entity("BackEnd.Models.AtividadeUsuarioDisciplina", b =>
+                {
+                    b.Property<int>("IdAtividadeDisciplina")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("idAtividade_disciplina")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AtividadeIdAtividade")
+                        .HasColumnName("atividade_idAtividade")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnName("status")
+                        .HasColumnType("enum('Pendente','Entregue','Atrasado')")
+                        .HasAnnotation("MySql:CharSet", "utf8")
+                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+
+                    b.Property<double>("Total")
+                        .HasColumnName("total")
+                        .HasColumnType("double");
+
+                    b.Property<int>("UsuarioDisciplinaIdUsuarioDisciplina")
+                        .HasColumnName("usuario_disciplina_idUsuario_Disciplina")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdAtividadeDisciplina")
+                        .HasName("PRIMARY");
+
+                    b.HasIndex("AtividadeIdAtividade")
+                        .HasName("fk_atividade_has_usuario_disciplina_atividade1_idx");
+
+                    b.HasIndex("UsuarioDisciplinaIdUsuarioDisciplina")
+                        .HasName("fk_atividade_has_usuario_disciplina_usuario_disciplina1_idx");
+
+                    b.ToTable("atividade_usuario_disciplina");
+                });
+
             modelBuilder.Entity("BackEnd.Models.Disciplina", b =>
                 {
                     b.Property<int>("IdDisciplina")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("idDisciplina")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.Property<string>("Descricao")
                         .HasColumnName("descricao")
@@ -88,15 +152,15 @@ namespace BackEnd.Migrations
                     b.Property<int>("IdDisciplinaAtividade")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("idDisciplina_atividade")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.Property<int>("AtividadeIdAtividade")
                         .HasColumnName("atividade_idAtividade")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.Property<int>("DisciplinaIdDisciplina")
                         .HasColumnName("disciplina_idDisciplina")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.HasKey("IdDisciplinaAtividade")
                         .HasName("PRIMARY");
@@ -140,39 +204,6 @@ namespace BackEnd.Migrations
                         .HasName("telefone_UNIQUE");
 
                     b.ToTable("escola");
-                });
-
-            modelBuilder.Entity("BackEnd.Models.Pontuacao", b =>
-                {
-                    b.Property<int>("IdPontuacao")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("idPontuacao")
-                        .HasColumnType("int(11)");
-
-                    b.Property<string>("Descricao")
-                        .HasColumnName("descricao")
-                        .HasColumnType("text")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
-
-                    b.Property<string>("Pontuacao1")
-                        .IsRequired()
-                        .HasColumnName("pontuacao")
-                        .HasColumnType("varchar(30)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
-
-                    b.Property<int>("PontuacaoUsuarioDisciplina")
-                        .HasColumnName("pontuacao_usuario_disciplina")
-                        .HasColumnType("int(11)");
-
-                    b.HasKey("IdPontuacao")
-                        .HasName("PRIMARY");
-
-                    b.HasIndex("PontuacaoUsuarioDisciplina")
-                        .HasName("fk_Pontuacao_Usuario_Disciplina1_idx");
-
-                    b.ToTable("pontuacao");
                 });
 
             modelBuilder.Entity("BackEnd.Models.Usuario", b =>
@@ -246,11 +277,18 @@ namespace BackEnd.Migrations
                     b.Property<int>("IdUsuarioDisciplina")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("idUsuario_Disciplina")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.Property<int>("DisciplinaIdDisciplina")
                         .HasColumnName("disciplina_idDisciplina")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
+
+                    b.Property<string>("TipoUsuario")
+                        .IsRequired()
+                        .HasColumnName("tipoUsuario")
+                        .HasColumnType("enum('Aluno','Professor','Responsavel','Adm')")
+                        .HasAnnotation("MySql:CharSet", "utf8")
+                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
 
                     b.Property<string>("UsuarioCpf")
                         .IsRequired()
@@ -268,10 +306,22 @@ namespace BackEnd.Migrations
                     b.HasIndex("UsuarioCpf")
                         .HasName("fk_Usuario_has_Disciplina_Usuario1_idx");
 
-                    b.HasIndex("UsuarioCpf", "DisciplinaIdDisciplina")
-                        .IsUnique();
-
                     b.ToTable("usuario_disciplina");
+                });
+
+            modelBuilder.Entity("BackEnd.Models.AtividadeUsuarioDisciplina", b =>
+                {
+                    b.HasOne("BackEnd.Models.Atividade", "AtividadeIdAtividadeNavigation")
+                        .WithMany("AtividadeUsuarioDisciplina")
+                        .HasForeignKey("AtividadeIdAtividade")
+                        .HasConstraintName("fk_atividade_has_usuario_disciplina_atividade1")
+                        .IsRequired();
+
+                    b.HasOne("BackEnd.Models.UsuarioDisciplina", "UsuarioDisciplinaIdUsuarioDisciplinaNavigation")
+                        .WithMany("AtividadeUsuarioDisciplina")
+                        .HasForeignKey("UsuarioDisciplinaIdUsuarioDisciplina")
+                        .HasConstraintName("fk_atividade_has_usuario_disciplina_usuario_disciplina1")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BackEnd.Models.DisciplinaAtividade", b =>
@@ -286,15 +336,6 @@ namespace BackEnd.Migrations
                         .WithMany("DisciplinaAtividade")
                         .HasForeignKey("DisciplinaIdDisciplina")
                         .HasConstraintName("fk_Disciplina_has_Atividade_Disciplina1")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BackEnd.Models.Pontuacao", b =>
-                {
-                    b.HasOne("BackEnd.Models.UsuarioDisciplina", "PontuacaoUsuarioDisciplinaNavigation")
-                        .WithMany("Pontuacao")
-                        .HasForeignKey("PontuacaoUsuarioDisciplina")
-                        .HasConstraintName("fk_Pontuacao_Usuario_Disciplina1")
                         .IsRequired();
                 });
 

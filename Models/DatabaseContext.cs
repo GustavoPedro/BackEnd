@@ -83,12 +83,6 @@ namespace BackEnd.Models
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
-                entity.Property(e => e.Valor)
-                    .IsRequired()
-                    .HasColumnName("valor")
-                    .HasColumnType("enum('Muito bom','Bom','Regular','Ruim','Muito ruim')")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
             });
 
             modelBuilder.Entity<AtividadeUsuarioDisciplina>(entity =>
