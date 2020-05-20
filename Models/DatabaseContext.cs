@@ -308,13 +308,7 @@ namespace BackEnd.Models
                 entity.Property(e => e.IdUsuarioDisciplina).HasColumnName("idUsuario_Disciplina");
 
                 entity.Property(e => e.DisciplinaIdDisciplina).HasColumnName("disciplina_idDisciplina");
-
-                entity.Property(e => e.TipoUsuario)
-                    .IsRequired()
-                    .HasColumnName("tipoUsuario")
-                    .HasColumnType("enum('Aluno','Professor','Responsavel','Adm')")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
+                
 
                 entity.Property(e => e.UsuarioCpf)
                     .IsRequired()

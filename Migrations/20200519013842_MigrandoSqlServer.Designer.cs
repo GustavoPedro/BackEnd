@@ -3,26 +3,31 @@ using System;
 using BackEnd.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200519013842_MigrandoSqlServer")]
+    partial class MigrandoSqlServer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.2")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("BackEnd.Models.Atividade", b =>
                 {
                     b.Property<int>("IdAtividade")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("idAtividade")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Atividade1")
                         .IsRequired()
@@ -56,7 +61,7 @@ namespace BackEnd.Migrations
                     b.Property<string>("StatusAtividade")
                         .IsRequired()
                         .HasColumnName("statusAtividade")
-                        .HasColumnType("enum('Pendente','Em andamento')")
+                        .HasColumnType("VARCHAR(45) CHECK (statusAtividade IN ('Pendente','Em andamento'))")
                         .HasAnnotation("MySql:CharSet", "utf8")
                         .HasAnnotation("MySql:Collation", "utf8_general_ci");
 
@@ -68,7 +73,7 @@ namespace BackEnd.Migrations
                         .HasAnnotation("MySql:Collation", "utf8_general_ci");
 
                     b.Property<decimal>("Valor")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("IdAtividade")
                         .HasName("PRIMARY");
@@ -81,7 +86,8 @@ namespace BackEnd.Migrations
                     b.Property<int>("IdAtividadeDisciplina")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("idAtividade_disciplina")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("AtividadeIdAtividade")
                         .HasColumnName("atividade_idAtividade")
@@ -90,13 +96,13 @@ namespace BackEnd.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnName("status")
-                        .HasColumnType("enum('Pendente','Entregue','Atrasado')")
+                        .HasColumnType("VARCHAR(45) CHECK (statusAtividade IN ('Pendente','Entregue','Atrasado'))")
                         .HasAnnotation("MySql:CharSet", "utf8")
                         .HasAnnotation("MySql:Collation", "utf8_general_ci");
 
                     b.Property<double>("Total")
                         .HasColumnName("total")
-                        .HasColumnType("double");
+                        .HasColumnType("float");
 
                     b.Property<int>("UsuarioDisciplinaIdUsuarioDisciplina")
                         .HasColumnName("usuario_disciplina_idUsuario_Disciplina")
@@ -119,7 +125,8 @@ namespace BackEnd.Migrations
                     b.Property<int>("IdDisciplina")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("idDisciplina")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Descricao")
                         .HasColumnName("descricao")
@@ -152,7 +159,8 @@ namespace BackEnd.Migrations
                     b.Property<int>("IdDisciplinaAtividade")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("idDisciplina_atividade")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("AtividadeIdAtividade")
                         .HasColumnName("atividade_idAtividade")
@@ -255,7 +263,7 @@ namespace BackEnd.Migrations
                     b.Property<string>("TipoUsuario")
                         .IsRequired()
                         .HasColumnName("tipoUsuario")
-                        .HasColumnType("enum('Aluno','Professor','Responsavel','Adm')")
+                        .HasColumnType("VARCHAR(45) CHECK (statusAtividade IN ('Aluno','Professor','Responsavel','Adm'))")
                         .HasAnnotation("MySql:CharSet", "utf8")
                         .HasAnnotation("MySql:Collation", "utf8_general_ci");
 
@@ -277,11 +285,19 @@ namespace BackEnd.Migrations
                     b.Property<int>("IdUsuarioDisciplina")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("idUsuario_Disciplina")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("DisciplinaIdDisciplina")
                         .HasColumnName("disciplina_idDisciplina")
                         .HasColumnType("int");
+
+                    b.Property<string>("TipoUsuario")
+                        .IsRequired()
+                        .HasColumnName("tipoUsuario")
+                        .HasColumnType("VARCHAR(45) CHECK (statusAtividade IN ('Aluno','Professor','Responsavel','Adm'))")
+                        .HasAnnotation("MySql:CharSet", "utf8")
+                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
 
                     b.Property<string>("UsuarioCpf")
                         .IsRequired()
