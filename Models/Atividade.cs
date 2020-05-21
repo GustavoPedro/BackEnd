@@ -7,21 +7,21 @@ namespace BackEnd.Models
     {
         public Atividade()
         {
-            AtividadeUsuarioDisciplina = new HashSet<AtividadeUsuarioDisciplina>();
-            DisciplinaAtividade = new HashSet<DisciplinaAtividade>();
+            AtividadeUsuarioDisciplina = new HashSet<AtividadeUsuario>();
         }
 
         public int IdAtividade { get; set; }
+        public int IdDisciplina { get; set; }
         public string Descricao { get; set; }
         public string Atividade1 { get; set; }
-        public decimal Valor { get; set; }
+        public float Valor { get; set; }
         public string StatusAtividade { get; set; }
         public DateTime DataEntrega { get; set; }
         public string TipoAtividade { get; set; }
         public string Premiacao { get; set; }
         public string MoralAtividade { get; set; }
 
-        public virtual ICollection<AtividadeUsuarioDisciplina> AtividadeUsuarioDisciplina { get; set; }
-        public virtual ICollection<DisciplinaAtividade> DisciplinaAtividade { get; set; }
+        public virtual ICollection<AtividadeUsuario> AtividadeUsuarioDisciplina { get; set; }
+        public virtual  Disciplina Disciplina { get; set; }
     }
 }

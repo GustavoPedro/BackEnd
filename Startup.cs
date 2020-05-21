@@ -95,7 +95,7 @@ namespace BackEnd
                 cfg.CreateMap<DisciplinaViewModel, Disciplina>();
                 cfg.CreateMap<AtividadeViewModel, Atividade>();
                 cfg.CreateMap<EscolaViewModel, Escola>();
-                cfg.CreateMap<AtividadeUsuarioDisciplinaViewModel, AtividadeUsuarioDisciplina>();
+                cfg.CreateMap<AtividadeUsuarioViewModel, AtividadeUsuario>();
             });
 
             IMapper mapper = config.CreateMapper();

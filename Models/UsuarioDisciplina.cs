@@ -7,7 +7,7 @@ namespace BackEnd.Models
     {
         public UsuarioDisciplina()
         {
-            AtividadeUsuarioDisciplina = new HashSet<AtividadeUsuarioDisciplina>();
+            AtividadeUsuarioDisciplina = new HashSet<AtividadeUsuario>();
         }
 
         public int IdUsuarioDisciplina { get; set; }
@@ -15,6 +15,6 @@ namespace BackEnd.Models
         public int DisciplinaIdDisciplina { get; set; }
         public virtual Disciplina DisciplinaIdDisciplinaNavigation { get; set; }
         public virtual Usuario UsuarioCpfNavigation { get; set; }
-        public virtual ICollection<AtividadeUsuarioDisciplina> AtividadeUsuarioDisciplina { get; set; }
+        public virtual ICollection<AtividadeUsuario> AtividadeUsuarioDisciplina { get; set; }
     }
 }

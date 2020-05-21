@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace BackEnd.ViewModel.AtividadeUsuarioDisciplina
 {
-    public class AtividadeUsuarioDisciplinaViewModel
+    public class AtividadeUsuarioViewModel
     {
         public int IdAtividadeDisciplina { get; set; }
         public string Status { get; set; }
         public double Total { get; set; }
-
 
     }
 }

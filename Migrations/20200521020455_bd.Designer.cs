@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20200518225202_Campo valor como numerico")]
-    partial class Campovalorcomonumerico
+    [Migration("20200521020455_bd")]
+    partial class bd
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,6 +43,9 @@ namespace BackEnd.Migrations
                         .HasAnnotation("MySql:CharSet", "utf8")
                         .HasAnnotation("MySql:Collation", "utf8_general_ci");
 
+                    b.Property<int>("IdDisciplina")
+                        .HasColumnType("int");
+
                     b.Property<string>("MoralAtividade")
                         .IsRequired()
                         .HasColumnType("varchar(45)")
@@ -69,51 +72,42 @@ namespace BackEnd.Migrations
                         .HasAnnotation("MySql:CharSet", "utf8")
                         .HasAnnotation("MySql:Collation", "utf8_general_ci");
 
-                    b.Property<decimal>("Valor")
-                        .HasColumnType("decimal(65,30)");
+                    b.Property<float>("Valor")
+                        .HasColumnType("float");
 
                     b.HasKey("IdAtividade")
                         .HasName("PRIMARY");
 
+                    b.HasIndex("IdDisciplina");
+
                     b.ToTable("atividade");
                 });
 
-            modelBuilder.Entity("BackEnd.Models.AtividadeUsuarioDisciplina", b =>
+            modelBuilder.Entity("BackEnd.Models.AtividadeUsuario", b =>
                 {
-                    b.Property<int>("IdAtividadeDisciplina")
+                    b.Property<int>("IdAtividadeUsuario")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("idAtividade_disciplina")
                         .HasColumnType("int");
 
-                    b.Property<int>("AtividadeIdAtividade")
-                        .HasColumnName("atividade_idAtividade")
+                    b.Property<int>("IdAtividade")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdUsuarioDisciplina")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnName("status")
-                        .HasColumnType("enum('Pendente','Entregue','Atrasado')")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<double>("Total")
-                        .HasColumnName("total")
                         .HasColumnType("double");
 
-                    b.Property<int>("UsuarioDisciplinaIdUsuarioDisciplina")
-                        .HasColumnName("usuario_disciplina_idUsuario_Disciplina")
-                        .HasColumnType("int");
+                    b.HasKey("IdAtividadeUsuario");
 
-                    b.HasKey("IdAtividadeDisciplina")
-                        .HasName("PRIMARY");
+                    b.HasIndex("IdAtividade");
 
-                    b.HasIndex("AtividadeIdAtividade")
-                        .HasName("fk_atividade_has_usuario_disciplina_atividade1_idx");
+                    b.HasIndex("IdUsuarioDisciplina");
 
-                    b.HasIndex("UsuarioDisciplinaIdUsuarioDisciplina")
-                        .HasName("fk_atividade_has_usuario_disciplina_usuario_disciplina1_idx");
-
-                    b.ToTable("atividade_usuario_disciplina");
+                    b.ToTable("AtividadeUsuario");
                 });
 
             modelBuilder.Entity("BackEnd.Models.Disciplina", b =>
@@ -147,33 +141,6 @@ namespace BackEnd.Migrations
                         .HasName("PRIMARY");
 
                     b.ToTable("disciplina");
-                });
-
-            modelBuilder.Entity("BackEnd.Models.DisciplinaAtividade", b =>
-                {
-                    b.Property<int>("IdDisciplinaAtividade")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("idDisciplina_atividade")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AtividadeIdAtividade")
-                        .HasColumnName("atividade_idAtividade")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DisciplinaIdDisciplina")
-                        .HasColumnName("disciplina_idDisciplina")
-                        .HasColumnType("int");
-
-                    b.HasKey("IdDisciplinaAtividade")
-                        .HasName("PRIMARY");
-
-                    b.HasIndex("AtividadeIdAtividade")
-                        .HasName("fk_Disciplina_has_Atividade_Atividade1_idx");
-
-                    b.HasIndex("DisciplinaIdDisciplina")
-                        .HasName("fk_Disciplina_has_Atividade_Disciplina1_idx");
-
-                    b.ToTable("disciplina_atividade");
                 });
 
             modelBuilder.Entity("BackEnd.Models.Escola", b =>
@@ -285,13 +252,6 @@ namespace BackEnd.Migrations
                         .HasColumnName("disciplina_idDisciplina")
                         .HasColumnType("int");
 
-                    b.Property<string>("TipoUsuario")
-                        .IsRequired()
-                        .HasColumnName("tipoUsuario")
-                        .HasColumnType("enum('Aluno','Professor','Responsavel','Adm')")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
-
                     b.Property<string>("UsuarioCpf")
                         .IsRequired()
                         .HasColumnName("usuario_cpf")
@@ -311,33 +271,27 @@ namespace BackEnd.Migrations
                     b.ToTable("usuario_disciplina");
                 });
 
-            modelBuilder.Entity("BackEnd.Models.AtividadeUsuarioDisciplina", b =>
+            modelBuilder.Entity("BackEnd.Models.Atividade", b =>
                 {
-                    b.HasOne("BackEnd.Models.Atividade", "AtividadeIdAtividadeNavigation")
-                        .WithMany("AtividadeUsuarioDisciplina")
-                        .HasForeignKey("AtividadeIdAtividade")
-                        .HasConstraintName("fk_atividade_has_usuario_disciplina_atividade1")
-                        .IsRequired();
-
-                    b.HasOne("BackEnd.Models.UsuarioDisciplina", "UsuarioDisciplinaIdUsuarioDisciplinaNavigation")
-                        .WithMany("AtividadeUsuarioDisciplina")
-                        .HasForeignKey("UsuarioDisciplinaIdUsuarioDisciplina")
-                        .HasConstraintName("fk_atividade_has_usuario_disciplina_usuario_disciplina1")
+                    b.HasOne("BackEnd.Models.Disciplina", "Disciplina")
+                        .WithMany("Atividades")
+                        .HasForeignKey("IdDisciplina")
+                        .HasConstraintName("fk_Disciplina_has_Atividade_Atividade1")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BackEnd.Models.DisciplinaAtividade", b =>
+            modelBuilder.Entity("BackEnd.Models.AtividadeUsuario", b =>
                 {
-                    b.HasOne("BackEnd.Models.Atividade", "AtividadeIdAtividadeNavigation")
-                        .WithMany("DisciplinaAtividade")
-                        .HasForeignKey("AtividadeIdAtividade")
-                        .HasConstraintName("fk_Disciplina_has_Atividade_Atividade1")
+                    b.HasOne("BackEnd.Models.Atividade", "IdAtividadeNavigation")
+                        .WithMany("AtividadeUsuarioDisciplina")
+                        .HasForeignKey("IdAtividade")
+                        .HasConstraintName("fk_atividade_has_usuario_disciplina_atividade1")
                         .IsRequired();
 
-                    b.HasOne("BackEnd.Models.Disciplina", "DisciplinaIdDisciplinaNavigation")
-                        .WithMany("DisciplinaAtividade")
-                        .HasForeignKey("DisciplinaIdDisciplina")
-                        .HasConstraintName("fk_Disciplina_has_Atividade_Disciplina1")
+                    b.HasOne("BackEnd.Models.UsuarioDisciplina", "IdUsuarioDisciplinaNavigation")
+                        .WithMany("AtividadeUsuarioDisciplina")
+                        .HasForeignKey("IdUsuarioDisciplina")
+                        .HasConstraintName("fk_atividade_has_usuario_disciplina_usuario_disciplina1")
                         .IsRequired();
                 });
 

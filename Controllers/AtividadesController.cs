@@ -63,6 +63,7 @@ namespace BackEnd.Controllers
 
             try
             {
+            
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -79,8 +80,6 @@ namespace BackEnd.Controllers
 
             return StatusCode(200, new { msg = $"Atividade {atividade.Atividade1} alterada com sucesso" });
         }
-
-        [HttpPut("/api/Atividades/t")]
 
         // POST: api/Atividades
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for

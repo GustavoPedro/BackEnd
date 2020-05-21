@@ -7,7 +7,7 @@ namespace BackEnd.Models
     {
         public Disciplina()
         {
-            DisciplinaAtividade = new HashSet<DisciplinaAtividade>();
+            Atividades = new HashSet<Atividade>();
             UsuarioDisciplina = new HashSet<UsuarioDisciplina>();
         }
 
@@ -16,7 +16,7 @@ namespace BackEnd.Models
         public string Materia { get; set; }
         public string Turno { get; set; }
 
-        public virtual ICollection<DisciplinaAtividade> DisciplinaAtividade { get; set; }
+        public virtual ICollection<Atividade> Atividades { get; set; }
         public virtual ICollection<UsuarioDisciplina> UsuarioDisciplina { get; set; }
     }
 }
