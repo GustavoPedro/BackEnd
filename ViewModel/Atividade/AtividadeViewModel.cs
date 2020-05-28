@@ -17,5 +17,7 @@ namespace BackEnd.ViewModel.Atividade
         public string Premiacao { get; set; }
         public string MoralAtividade { get; set; }
 
+        public int IdDisciplina { get; set; }
+
     }
 }
