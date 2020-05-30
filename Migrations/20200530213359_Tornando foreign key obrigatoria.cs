@@ -1,10 +1,9 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BackEnd.Migrations
 {
-    public partial class Removendodependenciadomysql : Migration
+    public partial class Tornandoforeignkeyobrigatoria : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +12,7 @@ namespace BackEnd.Migrations
                 columns: table => new
                 {
                     IdDisciplina = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Sqlite:Autoincrement", true),
                     Descricao = table.Column<string>(nullable: true),
                     Materia = table.Column<string>(maxLength: 35, nullable: true),
                     Turno = table.Column<string>(maxLength: 20, nullable: true)
@@ -41,7 +40,7 @@ namespace BackEnd.Migrations
                 columns: table => new
                 {
                     IdAtividade = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Sqlite:Autoincrement", true),
                     IdDisciplina = table.Column<int>(nullable: false),
                     Descricao = table.Column<string>(nullable: true),
                     Atividade1 = table.Column<string>(maxLength: 30, nullable: false),
@@ -74,7 +73,7 @@ namespace BackEnd.Migrations
                     Senha = table.Column<string>(maxLength: 45, nullable: false),
                     NomeSobrenome = table.Column<string>(maxLength: 35, nullable: false),
                     Telefone = table.Column<string>(maxLength: 25, nullable: true),
-                    EscolaCnpj = table.Column<string>(maxLength: 20, nullable: true)
+                    EscolaCnpj = table.Column<string>(maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -92,8 +91,8 @@ namespace BackEnd.Migrations
                 columns: table => new
                 {
                     idUsuario_Disciplina = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UsuarioCpf = table.Column<string>(maxLength: 20, nullable: true),
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UsuarioCpf = table.Column<string>(maxLength: 20, nullable: false),
                     disciplina_idDisciplina = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -118,7 +117,7 @@ namespace BackEnd.Migrations
                 columns: table => new
                 {
                     IdAtividadeUsuario = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Sqlite:Autoincrement", true),
                     IdAtividade = table.Column<int>(nullable: false),
                     IdUsuarioDisciplina = table.Column<int>(nullable: false),
                     Status = table.Column<string>(nullable: true),

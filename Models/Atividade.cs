@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace BackEnd.Models
 {
@@ -13,6 +14,8 @@ namespace BackEnd.Models
 
         [Key]
         public int IdAtividade { get; set; }
+
+        [Required]
         public int IdDisciplina { get; set; }
 
 
@@ -44,8 +47,10 @@ namespace BackEnd.Models
 
     public enum StatusAtividadeEnum
     {
+        [EnumMember(Value = "Pendente")]
         Pendente,
         [Display(Name ="Em andamento")]
+        [EnumMember(Value = "Em andamento")]
         Emand
     }
 }

@@ -11,7 +11,7 @@ namespace BackEnd.ViewModel.Atividade
         public string Descricao { get; set; }
         public string Atividade1 { get; set; }
         public decimal Valor { get; set; }
-        public string StatusAtividade { get; set; }
+        public BackEnd.Models.StatusAtividadeEnum StatusAtividade { get; set; }
         public DateTime DataEntrega { get; set; }
         public string TipoAtividade { get; set; }
         public string Premiacao { get; set; }

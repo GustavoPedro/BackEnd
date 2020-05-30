@@ -15,7 +15,9 @@ namespace BackEnd.Models
         public int IdUsuarioDisciplina { get; set; }
 
         [StringLength(20)]
+        [Required]
         public string UsuarioCpf { get; set; }
+        [Required]
         public int DisciplinaIdDisciplina { get; set; }
         public virtual Disciplina DisciplinaIdDisciplinaNavigation { get; set; }
         public virtual Usuario UsuarioCpfNavigation { get; set; }

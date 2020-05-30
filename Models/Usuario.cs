@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace BackEnd.Models
 {
@@ -31,6 +32,7 @@ namespace BackEnd.Models
         [StringLength(25)]
         public string Telefone { get; set; }
         [StringLength(20)]
+        [Required]
         public string EscolaCnpj { get; set; }
 
         public virtual Escola EscolaCnpjNavigation { get; set; }
@@ -38,9 +40,13 @@ namespace BackEnd.Models
     }
     public enum TipoUsuarioEnum
     {
+        [EnumMember(Value = "Aluno")]
         Aluno,
+        [EnumMember(Value = "Professor")]
         Professor,
+        [EnumMember(Value = "Responsavel")]
         Responsavel,
+        [EnumMember(Value = "Adm")]
         Adm
     }
 }

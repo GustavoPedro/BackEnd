@@ -8,7 +8,9 @@ namespace BackEnd.Models
     {
         [Key]
         public int IdAtividadeUsuario { get; set; }
+        [Required]
         public int IdAtividade { get; set; }
+        [Required]
         public int IdUsuarioDisciplina { get; set; }
         public string Status { get; set; }
         public double Total { get; set; }

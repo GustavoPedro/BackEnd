@@ -18,16 +18,6 @@ namespace BackEnd.Models
         public virtual DbSet<Escola> Escola { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
         public virtual DbSet<UsuarioDisciplina> UsuarioDisciplina { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=1802;database=pi", x => x.ServerVersion("8.0.20-mysql"));
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Atividade>(entity =>
@@ -39,9 +29,10 @@ namespace BackEnd.Models
                     .WithMany(p => p.Atividades)
                     .HasForeignKey(d => d.IdDisciplina)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_Disciplina_has_Atividade_Atividade1");
-
+                    .HasConstraintName("fk_Disciplina_has_Atividade_Atividade1");                
             });
+
+
 
 
             modelBuilder.Entity<Escola>(entity =>
