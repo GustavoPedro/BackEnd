@@ -31,56 +31,9 @@ namespace BackEnd.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Atividade>(entity =>
-            {
-                entity.HasKey(e => e.IdAtividade)
-                    .HasName("PRIMARY");
-
-                entity.ToTable("atividade");
-
-                entity.Property(e => e.IdAtividade).HasColumnName("idAtividade");
-
-                entity.Property(e => e.Atividade1)
-                    .IsRequired()
-                    .HasColumnName("atividade")
-                    .HasColumnType("varchar(30)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.DataEntrega)
-                    .HasColumnName("dataEntrega")
-                    .HasColumnType("date");
-
-                entity.Property(e => e.Descricao)
-                    .HasColumnName("descricao")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.MoralAtividade)
-                    .IsRequired()
-                    .HasColumnType("varchar(45)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.Premiacao)
-                    .IsRequired()
-                    .HasColumnType("varchar(45)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.StatusAtividade)
-                    .IsRequired()
-                    .HasColumnName("statusAtividade")
-                    .HasColumnType("enum('Pendente','Em andamento')")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.TipoAtividade)
-                    .IsRequired()
-                    .HasColumnName("tipoAtividade")
-                    .HasColumnType("varchar(45)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
+            {                
+               entity.Property(c => c.StatusAtividade)
+               .HasConversion<string>();
 
                 entity.HasOne(d => d.Disciplina)
                     .WithMany(p => p.Atividades)
@@ -90,77 +43,24 @@ namespace BackEnd.Models
 
             });
 
-            
-
-            modelBuilder.Entity<Disciplina>(entity =>
-            {
-                entity.HasKey(e => e.IdDisciplina)
-                    .HasName("PRIMARY");
-
-                entity.ToTable("disciplina");
-
-                entity.Property(e => e.IdDisciplina).HasColumnName("idDisciplina");
-
-                entity.Property(e => e.Descricao)
-                    .HasColumnName("descricao")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.Materia)
-                    .IsRequired()
-                    .HasColumnName("materia")
-                    .HasColumnType("varchar(35)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.Turno)
-                    .IsRequired()
-                    .HasColumnName("turno")
-                    .HasColumnType("varchar(20)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-            });
-
 
             modelBuilder.Entity<Escola>(entity =>
             {
                 entity.HasKey(e => e.Cnpj)
                     .HasName("PRIMARY");
 
-                entity.ToTable("escola");
-
                 entity.HasIndex(e => e.Telefone)
                     .HasName("telefone_UNIQUE")
-                    .IsUnique();
-
-                entity.Property(e => e.Cnpj)
-                    .HasColumnName("cnpj")
-                    .HasColumnType("varchar(20)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.Nome)
-                    .IsRequired()
-                    .HasColumnName("nome")
-                    .HasColumnType("varchar(35)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.Telefone)
-                    .IsRequired()
-                    .HasColumnName("telefone")
-                    .HasColumnType("varchar(25)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
+                    .IsUnique();                
             });
 
             modelBuilder.Entity<Usuario>(entity =>
             {
+                entity.Property(c => c.TipoUsuario)
+                .HasConversion<string>();
+
                 entity.HasKey(e => e.Cpf)
                     .HasName("PRIMARY");
-
-                entity.ToTable("usuario");
 
                 entity.HasIndex(e => e.Email)
                     .HasName("email_UNIQUE")
@@ -168,57 +68,6 @@ namespace BackEnd.Models
 
                 entity.HasIndex(e => e.EscolaCnpj)
                     .HasName("fk_Usuario_Escola_idx");
-
-                entity.Property(e => e.Cpf)
-                    .HasColumnName("cpf")
-                    .HasColumnType("varchar(20)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.DataNascimento)
-                    .HasColumnName("dataNascimento")
-                    .HasColumnType("date");
-
-                entity.Property(e => e.Email)
-                    .IsRequired()
-                    .HasColumnName("email")
-                    .HasColumnType("varchar(90)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.EscolaCnpj)
-                    .IsRequired()
-                    .HasColumnName("escola_cnpj")
-                    .HasColumnType("varchar(20)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.NomeSobrenome)
-                    .IsRequired()
-                    .HasColumnName("nomeSobrenome")
-                    .HasColumnType("varchar(35)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.Senha)
-                    .IsRequired()
-                    .HasColumnName("senha")
-                    .HasColumnType("varchar(45)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.Telefone)
-                    .HasColumnName("telefone")
-                    .HasColumnType("varchar(25)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.TipoUsuario)
-                    .IsRequired()
-                    .HasColumnName("tipoUsuario")
-                    .HasColumnType("enum('Aluno','Professor','Responsavel','Adm')")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
 
                 entity.HasOne(d => d.EscolaCnpjNavigation)
                     .WithMany(p => p.Usuario)
@@ -243,11 +92,7 @@ namespace BackEnd.Models
             });
 
             modelBuilder.Entity<UsuarioDisciplina>(entity =>
-            {
-                entity.HasKey(e => e.IdUsuarioDisciplina)
-                    .HasName("PRIMARY");
-
-                entity.ToTable("usuario_disciplina");
+            {               
 
                 entity.HasIndex(e => e.DisciplinaIdDisciplina)
                     .HasName("fk_Usuario_has_Disciplina_Disciplina1_idx");
@@ -259,13 +104,6 @@ namespace BackEnd.Models
 
                 entity.Property(e => e.DisciplinaIdDisciplina).HasColumnName("disciplina_idDisciplina");
                 
-
-                entity.Property(e => e.UsuarioCpf)
-                    .IsRequired()
-                    .HasColumnName("usuario_cpf")
-                    .HasColumnType("varchar(20)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
 
                 entity.HasOne(d => d.DisciplinaIdDisciplinaNavigation)
                     .WithMany(p => p.UsuarioDisciplina)

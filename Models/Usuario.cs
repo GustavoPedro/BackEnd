@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models
 {
@@ -9,17 +10,37 @@ namespace BackEnd.Models
         {
             UsuarioDisciplina = new HashSet<UsuarioDisciplina>();
         }
-
-        public string Cpf { get; set; }
+        [StringLength(20)]
+        public string Cpf { get; set; }        
+        [Required]
+        [StringLength(90)]
         public string Email { get; set; }
-        public string TipoUsuario { get; set; }
+        [Required]
+        public TipoUsuarioEnum TipoUsuario { get; set; }
+
+        [Required]
         public DateTime DataNascimento { get; set; }
+
+        [Required]
+        [StringLength(45)]
         public string Senha { get; set; }
+        [Required]
+        [StringLength(35)]
         public string NomeSobrenome { get; set; }
+
+        [StringLength(25)]
         public string Telefone { get; set; }
+        [StringLength(20)]
         public string EscolaCnpj { get; set; }
 
         public virtual Escola EscolaCnpjNavigation { get; set; }
         public virtual ICollection<UsuarioDisciplina> UsuarioDisciplina { get; set; }
+    }
+    public enum TipoUsuarioEnum
+    {
+        Aluno,
+        Professor,
+        Responsavel,
+        Adm
     }
 }

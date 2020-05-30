@@ -140,7 +140,7 @@ namespace BackEnd.Controllers
         [Route("api/Alunos")]
         public async Task<ActionResult<List<Usuario>>> getAlunos(){
             return await _context.Usuario
-            .Where(usr => usr.TipoUsuario== "Aluno")
+            .Where(usr => usr.TipoUsuario== TipoUsuarioEnum.Aluno)
             .Select(usr => new Usuario{
                 Cpf = usr.Cpf,
                 NomeSobrenome = usr.NomeSobrenome,
@@ -153,7 +153,7 @@ namespace BackEnd.Controllers
         [Authorize]
         [Route("api/Professores")]
         public async Task<ActionResult<List<Usuario>>> getProfessores(){
-            return await _context.Usuario.Where(usr => usr.TipoUsuario== "Professor").Select(usr => new Usuario{
+            return await _context.Usuario.Where(usr => usr.TipoUsuario== TipoUsuarioEnum.Professor).Select(usr => new Usuario{
                 Cpf = usr.Cpf,
                 NomeSobrenome = usr.NomeSobrenome,
                 TipoUsuario = usr.TipoUsuario

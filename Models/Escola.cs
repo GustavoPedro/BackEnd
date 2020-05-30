@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models
 {
@@ -10,10 +11,13 @@ namespace BackEnd.Models
             Usuario = new HashSet<Usuario>();
         }
 
+        [StringLength(20)]
         public string Cnpj { get; set; }
+        [StringLength(35)]
         public string Nome { get; set; }
+        [StringLength(25)]
         public string Telefone { get; set; }
-
+    
         public virtual ICollection<Usuario> Usuario { get; set; }
     }
 }

@@ -21,64 +21,49 @@ namespace BackEnd.Migrations
                 {
                     b.Property<int>("IdAtividade")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("idAtividade")
                         .HasColumnType("int");
 
                     b.Property<string>("Atividade1")
                         .IsRequired()
-                        .HasColumnName("atividade")
-                        .HasColumnType("varchar(30)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(30) CHARACTER SET utf8mb4")
+                        .HasMaxLength(30);
 
                     b.Property<DateTime>("DataEntrega")
-                        .HasColumnName("dataEntrega")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Descricao")
-                        .HasColumnName("descricao")
-                        .HasColumnType("text")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<int>("IdDisciplina")
                         .HasColumnType("int");
 
                     b.Property<string>("MoralAtividade")
                         .IsRequired()
-                        .HasColumnType("varchar(45)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(45) CHARACTER SET utf8mb4")
+                        .HasMaxLength(45);
 
                     b.Property<string>("Premiacao")
                         .IsRequired()
-                        .HasColumnType("varchar(45)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(45) CHARACTER SET utf8mb4")
+                        .HasMaxLength(45);
 
                     b.Property<string>("StatusAtividade")
                         .IsRequired()
-                        .HasColumnName("statusAtividade")
-                        .HasColumnType("enum('Pendente','Em andamento')")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("TipoAtividade")
                         .IsRequired()
-                        .HasColumnName("tipoAtividade")
-                        .HasColumnType("varchar(45)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(45) CHARACTER SET utf8mb4")
+                        .HasMaxLength(45);
 
                     b.Property<float>("Valor")
                         .HasColumnType("float");
 
-                    b.HasKey("IdAtividade")
-                        .HasName("PRIMARY");
+                    b.HasKey("IdAtividade");
 
                     b.HasIndex("IdDisciplina");
 
-                    b.ToTable("atividade");
+                    b.ToTable("Atividade");
                 });
 
             modelBuilder.Entity("BackEnd.Models.AtividadeUsuario", b =>
@@ -112,56 +97,37 @@ namespace BackEnd.Migrations
                 {
                     b.Property<int>("IdDisciplina")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("idDisciplina")
                         .HasColumnType("int");
 
                     b.Property<string>("Descricao")
-                        .HasColumnName("descricao")
-                        .HasColumnType("text")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Materia")
-                        .IsRequired()
-                        .HasColumnName("materia")
-                        .HasColumnType("varchar(35)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(35) CHARACTER SET utf8mb4")
+                        .HasMaxLength(35);
 
                     b.Property<string>("Turno")
-                        .IsRequired()
-                        .HasColumnName("turno")
-                        .HasColumnType("varchar(20)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
+                        .HasMaxLength(20);
 
-                    b.HasKey("IdDisciplina")
-                        .HasName("PRIMARY");
+                    b.HasKey("IdDisciplina");
 
-                    b.ToTable("disciplina");
+                    b.ToTable("Disciplina");
                 });
 
             modelBuilder.Entity("BackEnd.Models.Escola", b =>
                 {
                     b.Property<string>("Cnpj")
-                        .HasColumnName("cnpj")
-                        .HasColumnType("varchar(20)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
+                        .HasMaxLength(20);
 
                     b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnName("nome")
-                        .HasColumnType("varchar(35)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(35) CHARACTER SET utf8mb4")
+                        .HasMaxLength(35);
 
                     b.Property<string>("Telefone")
-                        .IsRequired()
-                        .HasColumnName("telefone")
-                        .HasColumnType("varchar(25)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(25) CHARACTER SET utf8mb4")
+                        .HasMaxLength(25);
 
                     b.HasKey("Cnpj")
                         .HasName("PRIMARY");
@@ -170,61 +136,44 @@ namespace BackEnd.Migrations
                         .IsUnique()
                         .HasName("telefone_UNIQUE");
 
-                    b.ToTable("escola");
+                    b.ToTable("Escola");
                 });
 
             modelBuilder.Entity("BackEnd.Models.Usuario", b =>
                 {
                     b.Property<string>("Cpf")
-                        .HasColumnName("cpf")
-                        .HasColumnType("varchar(20)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
+                        .HasMaxLength(20);
 
                     b.Property<DateTime>("DataNascimento")
-                        .HasColumnName("dataNascimento")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnName("email")
-                        .HasColumnType("varchar(90)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(90) CHARACTER SET utf8mb4")
+                        .HasMaxLength(90);
 
                     b.Property<string>("EscolaCnpj")
-                        .IsRequired()
-                        .HasColumnName("escola_cnpj")
-                        .HasColumnType("varchar(20)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
+                        .HasMaxLength(20);
 
                     b.Property<string>("NomeSobrenome")
                         .IsRequired()
-                        .HasColumnName("nomeSobrenome")
-                        .HasColumnType("varchar(35)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(35) CHARACTER SET utf8mb4")
+                        .HasMaxLength(35);
 
                     b.Property<string>("Senha")
                         .IsRequired()
-                        .HasColumnName("senha")
-                        .HasColumnType("varchar(45)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(45) CHARACTER SET utf8mb4")
+                        .HasMaxLength(45);
 
                     b.Property<string>("Telefone")
-                        .HasColumnName("telefone")
-                        .HasColumnType("varchar(25)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(25) CHARACTER SET utf8mb4")
+                        .HasMaxLength(25);
 
                     b.Property<string>("TipoUsuario")
                         .IsRequired()
-                        .HasColumnName("tipoUsuario")
-                        .HasColumnType("enum('Aluno','Professor','Responsavel','Adm')")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Cpf")
                         .HasName("PRIMARY");
@@ -236,7 +185,7 @@ namespace BackEnd.Migrations
                     b.HasIndex("EscolaCnpj")
                         .HasName("fk_Usuario_Escola_idx");
 
-                    b.ToTable("usuario");
+                    b.ToTable("Usuario");
                 });
 
             modelBuilder.Entity("BackEnd.Models.UsuarioDisciplina", b =>
@@ -251,14 +200,10 @@ namespace BackEnd.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UsuarioCpf")
-                        .IsRequired()
-                        .HasColumnName("usuario_cpf")
-                        .HasColumnType("varchar(20)")
-                        .HasAnnotation("MySql:CharSet", "utf8")
-                        .HasAnnotation("MySql:Collation", "utf8_general_ci");
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
+                        .HasMaxLength(20);
 
-                    b.HasKey("IdUsuarioDisciplina")
-                        .HasName("PRIMARY");
+                    b.HasKey("IdUsuarioDisciplina");
 
                     b.HasIndex("DisciplinaIdDisciplina")
                         .HasName("fk_Usuario_has_Disciplina_Disciplina1_idx");
@@ -266,7 +211,7 @@ namespace BackEnd.Migrations
                     b.HasIndex("UsuarioCpf")
                         .HasName("fk_Usuario_has_Disciplina_Usuario1_idx");
 
-                    b.ToTable("usuario_disciplina");
+                    b.ToTable("UsuarioDisciplina");
                 });
 
             modelBuilder.Entity("BackEnd.Models.Atividade", b =>
@@ -298,8 +243,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.Escola", "EscolaCnpjNavigation")
                         .WithMany("Usuario")
                         .HasForeignKey("EscolaCnpj")
-                        .HasConstraintName("fk_Usuario_Escola")
-                        .IsRequired();
+                        .HasConstraintName("fk_Usuario_Escola");
                 });
 
             modelBuilder.Entity("BackEnd.Models.UsuarioDisciplina", b =>
@@ -313,8 +257,7 @@ namespace BackEnd.Migrations
                     b.HasOne("BackEnd.Models.Usuario", "UsuarioCpfNavigation")
                         .WithMany("UsuarioDisciplina")
                         .HasForeignKey("UsuarioCpf")
-                        .HasConstraintName("fk_Usuario_has_Disciplina_Usuario1")
-                        .IsRequired();
+                        .HasConstraintName("fk_Usuario_has_Disciplina_Usuario1");
                 });
 #pragma warning restore 612, 618
         }

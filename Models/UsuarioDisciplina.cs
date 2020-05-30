@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models
 {
@@ -10,7 +11,10 @@ namespace BackEnd.Models
             AtividadeUsuarioDisciplina = new HashSet<AtividadeUsuario>();
         }
 
+        [Key]
         public int IdUsuarioDisciplina { get; set; }
+
+        [StringLength(20)]
         public string UsuarioCpf { get; set; }
         public int DisciplinaIdDisciplina { get; set; }
         public virtual Disciplina DisciplinaIdDisciplinaNavigation { get; set; }
