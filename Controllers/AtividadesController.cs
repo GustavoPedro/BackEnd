@@ -92,6 +92,7 @@ namespace BackEnd.Controllers
                 {
                     return NotFound(new { msg = "Não foi possível encontrar a atividade" });
                 }
+
                 else
                 {
                     throw;
@@ -122,6 +123,7 @@ namespace BackEnd.Controllers
                 {
                     return Conflict(new { msg = "Esta atividade já está cadastrada" });
                 }
+
                 else
                 {
                     return BadRequest(new { msg = "Ocorreu um erro inesperado" });

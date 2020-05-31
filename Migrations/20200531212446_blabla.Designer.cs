@@ -9,56 +9,57 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20200530213359_Tornando foreign key obrigatoria")]
-    partial class Tornandoforeignkeyobrigatoria
+    [Migration("20200531212446_blabla")]
+    partial class blabla
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.2");
+                .HasAnnotation("ProductVersion", "3.1.2")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("BackEnd.Models.Atividade", b =>
                 {
                     b.Property<int>("IdAtividade")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Atividade1")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(30) CHARACTER SET utf8mb4")
                         .HasMaxLength(30);
 
                     b.Property<DateTime>("DataEntrega")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Descricao")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<int>("IdDisciplina")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("MoralAtividade")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(45) CHARACTER SET utf8mb4")
                         .HasMaxLength(45);
 
                     b.Property<string>("Premiacao")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(45) CHARACTER SET utf8mb4")
                         .HasMaxLength(45);
 
                     b.Property<string>("StatusAtividade")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("TipoAtividade")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(45) CHARACTER SET utf8mb4")
                         .HasMaxLength(45);
 
                     b.Property<float>("Valor")
-                        .HasColumnType("REAL");
+                        .HasColumnType("float");
 
                     b.HasKey("IdAtividade");
 
@@ -71,19 +72,19 @@ namespace BackEnd.Migrations
                 {
                     b.Property<int>("IdAtividadeUsuario")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("IdAtividade")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("IdUsuarioDisciplina")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Status")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<double>("Total")
-                        .HasColumnType("REAL");
+                        .HasColumnType("double");
 
                     b.HasKey("IdAtividadeUsuario");
 
@@ -98,17 +99,17 @@ namespace BackEnd.Migrations
                 {
                     b.Property<int>("IdDisciplina")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Descricao")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Materia")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(35) CHARACTER SET utf8mb4")
                         .HasMaxLength(35);
 
                     b.Property<string>("Turno")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
                     b.HasKey("IdDisciplina");
@@ -119,15 +120,15 @@ namespace BackEnd.Migrations
             modelBuilder.Entity("BackEnd.Models.Escola", b =>
                 {
                     b.Property<string>("Cnpj")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
                     b.Property<string>("Nome")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(35) CHARACTER SET utf8mb4")
                         .HasMaxLength(35);
 
                     b.Property<string>("Telefone")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(25) CHARACTER SET utf8mb4")
                         .HasMaxLength(25);
 
                     b.HasKey("Cnpj")
@@ -138,44 +139,52 @@ namespace BackEnd.Migrations
                         .HasName("telefone_UNIQUE");
 
                     b.ToTable("Escola");
+
+                    b.HasData(
+                        new
+                        {
+                            Cnpj = "12345",
+                            Nome = "Una Aimorés",
+                            Telefone = "31 3 3333 3333"
+                        });
                 });
 
             modelBuilder.Entity("BackEnd.Models.Usuario", b =>
                 {
                     b.Property<string>("Cpf")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
                     b.Property<DateTime>("DataNascimento")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(90) CHARACTER SET utf8mb4")
                         .HasMaxLength(90);
 
                     b.Property<string>("EscolaCnpj")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
                     b.Property<string>("NomeSobrenome")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(35) CHARACTER SET utf8mb4")
                         .HasMaxLength(35);
 
                     b.Property<string>("Senha")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(45) CHARACTER SET utf8mb4")
                         .HasMaxLength(45);
 
                     b.Property<string>("Telefone")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(25) CHARACTER SET utf8mb4")
                         .HasMaxLength(25);
 
                     b.Property<string>("TipoUsuario")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Cpf")
                         .HasName("PRIMARY");
@@ -195,15 +204,15 @@ namespace BackEnd.Migrations
                     b.Property<int>("IdUsuarioDisciplina")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("idUsuario_Disciplina")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("DisciplinaIdDisciplina")
                         .HasColumnName("disciplina_idDisciplina")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("UsuarioCpf")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
                     b.HasKey("IdUsuarioDisciplina");

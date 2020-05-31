@@ -29,11 +29,9 @@ namespace BackEnd.Models
                     .WithMany(p => p.Atividades)
                     .HasForeignKey(d => d.IdDisciplina)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_Disciplina_has_Atividade_Atividade1");                
+                    .HasConstraintName("fk_Disciplina_has_Atividade_Atividade1");               
+               
             });
-
-
-
 
             modelBuilder.Entity<Escola>(entity =>
             {
@@ -42,7 +40,13 @@ namespace BackEnd.Models
 
                 entity.HasIndex(e => e.Telefone)
                     .HasName("telefone_UNIQUE")
-                    .IsUnique();                
+                    .IsUnique();
+
+                entity.HasData(new Escola {
+                    Cnpj = "12345",
+                    Nome = "Una Aimorés",
+                    Telefone = "31 3 3333 3333"
+                });
             });
 
             modelBuilder.Entity<Usuario>(entity =>

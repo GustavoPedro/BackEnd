@@ -1,9 +1,10 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BackEnd.Migrations
 {
-    public partial class Tornandoforeignkeyobrigatoria : Migration
+    public partial class blabla : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,7 +13,7 @@ namespace BackEnd.Migrations
                 columns: table => new
                 {
                     IdDisciplina = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Descricao = table.Column<string>(nullable: true),
                     Materia = table.Column<string>(maxLength: 35, nullable: true),
                     Turno = table.Column<string>(maxLength: 20, nullable: true)
@@ -40,7 +41,7 @@ namespace BackEnd.Migrations
                 columns: table => new
                 {
                     IdAtividade = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     IdDisciplina = table.Column<int>(nullable: false),
                     Descricao = table.Column<string>(nullable: true),
                     Atividade1 = table.Column<string>(maxLength: 30, nullable: false),
@@ -91,7 +92,7 @@ namespace BackEnd.Migrations
                 columns: table => new
                 {
                     idUsuario_Disciplina = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UsuarioCpf = table.Column<string>(maxLength: 20, nullable: false),
                     disciplina_idDisciplina = table.Column<int>(nullable: false)
                 },
@@ -117,7 +118,7 @@ namespace BackEnd.Migrations
                 columns: table => new
                 {
                     IdAtividadeUsuario = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     IdAtividade = table.Column<int>(nullable: false),
                     IdUsuarioDisciplina = table.Column<int>(nullable: false),
                     Status = table.Column<string>(nullable: true),
@@ -139,6 +140,11 @@ namespace BackEnd.Migrations
                         principalColumn: "idUsuario_Disciplina",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Escola",
+                columns: new[] { "Cnpj", "Nome", "Telefone" },
+                values: new object[] { "12345", "Una Aimorés", "31 3 3333 3333" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Atividade_IdDisciplina",
