@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using BackEnd.ViewModel.Atividade;
 using BackEnd.ViewModel.AtividadeUsuarioDisciplina;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SQLitePCL;
 
 namespace BackEnd.Controllers
 {
@@ -52,18 +54,36 @@ namespace BackEnd.Controllers
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("/api/Atividades/{id}")]
         [Authorize(Roles = "Professor, Adm")]
-        public async Task<IActionResult> PutAtividade(int id, Atividade atividade)
+        public async Task<IActionResult> PutAtividade(int id, Atividade atividade, [FromQuery]UsuarioDisciplina usuarioDisciplina, [FromQuery]Usuario usuario)
         {
             if (id != atividade.IdAtividade)
             {
                 return BadRequest(new { msg = "Não foi possivel encontrar a atividade informada" });
             }
 
+         
             _context.Entry(atividade).State = EntityState.Modified;
 
             try
             {
-            
+               if (atividade.StatusAtividade.Equals("Em andamento"))
+                {
+                    List<UsuarioDisciplina> lista = _context.UsuarioDisciplina.Where(a => a.DisciplinaIdDisciplina == atividade.IdDisciplina).ToList();
+
+                    foreach (UsuarioDisciplina usuarioDisc in lista)
+                    {
+
+                        AtividadeUsuario atividadeUsuario = new AtividadeUsuario();
+
+                        atividadeUsuario.IdAtividade = id;
+                        atividadeUsuario.IdUsuarioDisciplina = usuarioDisc.IdUsuarioDisciplina;
+                        atividadeUsuario.Status = "Em andamento";
+                        atividadeUsuario.Total = 0;
+
+                        _context.AtividadeUsuario.Add(atividadeUsuario);
+                    }
+                }
+               
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
