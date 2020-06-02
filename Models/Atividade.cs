@@ -17,8 +17,6 @@ namespace BackEnd.Models
 
         [Required(ErrorMessage = "O campo de Id da Disciplina é obrigatório")]
         public int IdDisciplina { get; set; }
-
-
         public string Descricao { get; set; }
 
         [Required(ErrorMessage = "O campo de Atividade é obrigatório")]

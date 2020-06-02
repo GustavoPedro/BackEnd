@@ -12,8 +12,8 @@ namespace BackEnd.Models
             UsuarioDisciplina = new HashSet<UsuarioDisciplina>();
         }
         [StringLength(20)]
-        public string Cpf { get; set; }        
-        [Required]
+        public string Cpf { get; set; }
+        [Required(ErrorMessage = "O campo de Email é obrigatório")]
         [StringLength(90)]
         public string Email { get; set; }
         [Required]
