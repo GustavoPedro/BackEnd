@@ -33,14 +33,14 @@ namespace BackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<IEnumerable<UsuarioDisciplinaSearchViewModel>>> GetUsuariosDisciplinas()
         {
-            
+
             return await _context.Usuario
                     .Select(usr => new UsuarioDisciplinaSearchViewModel
                     {
                         Email = usr.Email,
                         Nome = usr.NomeSobrenome,
                         Disciplinas = _context.Disciplina.Where(disc => usr.UsuarioDisciplina.Select(usrdisc => usrdisc.DisciplinaIdDisciplina).Contains(disc.IdDisciplina)).ToList()
-                    }                
+                    }
                 )
                 .ToListAsync();
         }
@@ -64,7 +64,7 @@ namespace BackEnd.Controllers
                 }
                 )
                 .FirstOrDefaultAsync();
-            
+
 
             if (usuarioDisciplina == null)
             {
@@ -72,6 +72,26 @@ namespace BackEnd.Controllers
             }
 
             return usuarioDisciplina;
+        }
+
+        [HttpGet("ranking/{IdDisciplina}")]
+       
+        public async Task<IQueryable<object>> GetRanking(int IdDisciplina)
+        {
+            return from usuarioDisciplina in _context.UsuarioDisciplina
+                        join atividadeUsuario in _context.AtividadeUsuario
+                            on usuarioDisciplina.IdUsuarioDisciplina equals atividadeUsuario.IdUsuarioDisciplina 
+                            into grouping
+                        from atividadeUsuario in grouping.DefaultIfEmpty()
+                        where usuarioDisciplina.DisciplinaIdDisciplina == IdDisciplina
+                        group atividadeUsuario by new {atividadeUsuario.IdUsuarioDisciplina,usuarioDisciplina.UsuarioCpfNavigation.NomeSobrenome} into groupby
+                        orderby  groupby.Sum(gb => gb.Total) descending
+                        select new 
+                        { 
+                            Usuario = groupby.Key,
+                            Total = groupby.Sum(gb => gb.Total)
+                        };
+
         }
 
         /// <summary>
@@ -89,7 +109,7 @@ namespace BackEnd.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuarioDisciplinaExists(usuarioDisciplina.UsuarioCpf,IdDisciplina))
+                if (!UsuarioDisciplinaExists(usuarioDisciplina.UsuarioCpf, IdDisciplina))
                 {
                     return NotFound(new { msg = "Usuário não encontrado na disciplina" });
                 }
@@ -124,7 +144,7 @@ namespace BackEnd.Controllers
             }
             catch (DbUpdateException)
             {
-                if (UsuarioDisciplinaExists(usuarioDisciplinaViewModel.UsuarioCpf,usuarioDisciplinaViewModel.DisciplinaIdDisciplina))
+                if (UsuarioDisciplinaExists(usuarioDisciplinaViewModel.UsuarioCpf, usuarioDisciplinaViewModel.DisciplinaIdDisciplina))
                 {
                     return Conflict(new { msg = "O usuário informado já existe na disciplina" });
                 }
@@ -145,7 +165,7 @@ namespace BackEnd.Controllers
         /// </summary>
         [HttpDelete()]
         [Authorize(Roles = "Professor,Adm")]
-        public async Task<ActionResult<UsuarioDisciplina>> DeleteUsuarioDisciplina(string cpf,int id)
+        public async Task<ActionResult<UsuarioDisciplina>> DeleteUsuarioDisciplina(string cpf, int id)
         {
             var usuarioDisciplina = await _context.UsuarioDisciplina.Where(usr => usr.UsuarioCpf == cpf && usr.DisciplinaIdDisciplina == id).FirstOrDefaultAsync();
             if (usuarioDisciplina == null)
@@ -159,7 +179,7 @@ namespace BackEnd.Controllers
             return usuarioDisciplina;
         }
 
-        private bool UsuarioDisciplinaExists(string cpf,int idDisciplina)
+        private bool UsuarioDisciplinaExists(string cpf, int idDisciplina)
         {
             return _context.UsuarioDisciplina.Any(e => e.UsuarioCpf == cpf && e.DisciplinaIdDisciplina == idDisciplina);
         }
@@ -167,7 +187,7 @@ namespace BackEnd.Controllers
         private bool CpfOrDisciplinaNotExists(string cpf, int idDisciplina)
         {
             bool exists = true;
-            if (!_context.Usuario.Any(usrdisc => usrdisc.Cpf == cpf)) 
+            if (!_context.Usuario.Any(usrdisc => usrdisc.Cpf == cpf))
             {
                 exists = false;
             }
