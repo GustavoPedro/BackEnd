@@ -136,9 +136,7 @@ namespace BackEnd.Controllers
                 {
                     throw;
                 }
-            }
-
-            CreatedAtAction("GetAtividade", new { id = atividade.IdAtividade }, atividade);
+            }           
 
             try
             {
@@ -150,8 +148,7 @@ namespace BackEnd.Controllers
             }
 
              _context.SaveChanges();
-
-            return StatusCode(200, new { msg = $"Atividade {atividade.Atividade1} cadastrada com sucesso" });
+            return CreatedAtAction("GetAtividade", new { id = atividade.IdAtividade,msg= $"Atividade {atividade.Atividade1} cadastrada com sucesso" }, atividade);            
         }
 
         // DELETE: api/Atividades/5
