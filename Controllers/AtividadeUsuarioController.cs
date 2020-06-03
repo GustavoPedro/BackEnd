@@ -26,10 +26,27 @@ namespace BackEnd.Controllers
             return await _context.AtividadeUsuario.ToListAsync();
         }
 
+        [HttpGet("/api/AtividadeUsuarioEDisciplinas/{email}")]
+        public async Task<AtividadeUsuarioEDisciplinaViewModel> GetAtividadeUsuarioEDisciplina(string email)
+        {
+            List<AtividadeUsuario> atividadesUsuario = await _context.AtividadeUsuario
+            .Include(ativ => ativ.IdAtividadeNavigation)
+            .Where(ativ => ativ.IdUsuarioDisciplinaNavigation.UsuarioCpfNavigation.Email == email)
+            .ToListAsync();
+            List<Disciplina> disciplinas = await _context
+            .Disciplina
+            .Where(disc => disc.UsuarioDisciplina.Select(usrdisc => usrdisc.UsuarioCpfNavigation.Email).Contains(email))
+            .ToListAsync();
+            AtividadeUsuarioEDisciplinaViewModel ativ = new AtividadeUsuarioEDisciplinaViewModel();
+            ativ.AtividadesUsuario = atividadesUsuario;
+            ativ.Disciplinas = disciplinas;
+            return ativ;
+        }
+
         // GET: api/AtividadeUsuarios/5
         [HttpGet("/api/AtividadeUsuario/{id}")]
         [Authorize]
-        public async Task<ActionResult<AtividadeUsuario>> GetAtividadeUsuario( int id)
+        public async Task<ActionResult<AtividadeUsuario>> GetAtividadeUsuario(int id)
         {
 
             var resultado = from AtividadeUsuario in _context.AtividadeUsuario
@@ -43,7 +60,7 @@ namespace BackEnd.Controllers
                                 Status = AtividadeUsuario.Status,
                                 Total = AtividadeUsuario.Total
                             };
-           
+
             return Ok(resultado);
         }
 
