@@ -53,12 +53,12 @@ namespace BackEnd
 
             //services.AddDbContextPool<DatabaseContext>(options => options
             //    // replace with your connection string
-            //    .UseMySql(Configuration.GetConnectionString("MySql"), mySqlOptions => mySqlOptions
-            //        .ServerVersion(new ServerVersion(new Version(8, 0, 18), ServerType.MySql))            
+            //    .UseMySql(Configuration.GetConnectionString("MySql"), mySqlOptions => mySqlOptions	
+            //        .ServerVersion(new ServerVersion(new Version(8, 0, 18), ServerType.MySql))      
             //));
 
             services.AddDbContext<DatabaseContext>(options =>
-                     options.UseSqlite(Configuration.GetConnectionString("Sqlite"))
+            options.UseSqlite(Configuration.GetConnectionString("Sqlite"))
             );
 
             services.AddSwaggerGen(c =>

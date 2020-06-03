@@ -8,7 +8,8 @@ namespace BackEnd.ViewModel.AtividadeUsuarioDisciplina
 {
     public class AtividadeUsuarioViewModel
     {
-        public int IdAtividadeDisciplina { get; set; }
+        public int IdAtividade { get; set; }
+        public int IdUsuarioDisciplina { get; set; }
         public string Status { get; set; }
         public double Total { get; set; }
 

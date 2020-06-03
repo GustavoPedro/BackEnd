@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using BackEnd.ViewModel.Atividade;
 using BackEnd.ViewModel.AtividadeUsuarioDisciplina;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SQLitePCL;
 
 namespace BackEnd.Controllers
 {
@@ -47,10 +49,32 @@ namespace BackEnd.Controllers
             return atividade;
         }
 
-        // PUT: api/Atividades/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("/api/Atividades/{id}")]
+        //Método para inserir alunos cadastrados em atividades que estejam "Em andamento"
+        private void AtivAndamento(Atividade atividade)
+        {
+            if (atividade.StatusAtividade == StatusAtividadeEnum.Emand)
+            {
+                List<UsuarioDisciplina> lista = _context.UsuarioDisciplina.Where(a => a.DisciplinaIdDisciplina == atividade.IdDisciplina).ToList();
+
+                foreach (UsuarioDisciplina usuarioDisc in lista)
+                {
+
+                    AtividadeUsuario atividadeUsuario = new AtividadeUsuario();
+
+                    atividadeUsuario.IdAtividade = atividade.IdAtividade;
+                    atividadeUsuario.IdUsuarioDisciplina = usuarioDisc.IdUsuarioDisciplina;
+                    atividadeUsuario.Status = "Em andamento";
+                    atividadeUsuario.Total = 0;
+
+                    _context.AtividadeUsuario.Add(atividadeUsuario);
+                }
+            }
+        }
+
+       // PUT: api/Atividades/5
+       // To protect from overposting attacks, please enable the specific properties you want to bind to, for
+       // more details see https://aka.ms/RazorPagesCRUD.
+       [HttpPut("/api/Atividades/{id}")]
         [Authorize(Roles = "Professor, Adm")]
         public async Task<IActionResult> PutAtividade(int id, Atividade atividade)
         {
@@ -59,11 +83,13 @@ namespace BackEnd.Controllers
                 return BadRequest(new { msg = "Não foi possivel encontrar a atividade informada" });
             }
 
+         
             _context.Entry(atividade).State = EntityState.Modified;
 
             try
             {
-            
+                AtivAndamento(atividade);
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -72,6 +98,7 @@ namespace BackEnd.Controllers
                 {
                     return NotFound(new { msg = "Não foi possível encontrar a atividade" });
                 }
+
                 else
                 {
                     throw;
@@ -89,11 +116,13 @@ namespace BackEnd.Controllers
         [Authorize(Roles = "Professor,Adm")]
         public async Task<dynamic> PostAtividades([FromBody] AtividadeViewModel model)
         {
+            int id;
             Atividade atividade = _mapper.Map<Atividade>(model);
             _context.Atividade.Add(atividade);
 
             try
             {
+               
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
@@ -102,17 +131,28 @@ namespace BackEnd.Controllers
                 {
                     return Conflict(new { msg = "Esta atividade já está cadastrada" });
                 }
+
                 else
                 {
-                    return BadRequest(new { msg = "Ocorreu um erro inesperado" });
+                    throw;
                 }
             }
 
             CreatedAtAction("GetAtividade", new { id = atividade.IdAtividade }, atividade);
+
+            try
+            {
+                AtivAndamento(atividade);
+            }
+            catch(DbUpdateException)
+            {
+                return BadRequest(new { msg = "Ocorreu um erro inesperado" });
+            }
+
+             _context.SaveChanges();
+
             return StatusCode(200, new { msg = $"Atividade {atividade.Atividade1} cadastrada com sucesso" });
         }
-
-
 
         // DELETE: api/Atividades/5
         [HttpDelete("/api/Atividades/{id}")]
