@@ -54,11 +54,13 @@ namespace BackEnd.Controllers
                             where AtividadeUsuario.IdAtividade == id
                             select new
                             {
-                                IdAtividade = AtividadeUsuario.IdAtividadeUsuario,
+                                IdAtividadeUsuario = AtividadeUsuario.IdAtividadeUsuario,
+                                IdAtividade = AtividadeUsuario.IdAtividade,
                                 Nome = UsuarioDisciplina.UsuarioCpfNavigation.NomeSobrenome,
                                 Cpf = UsuarioDisciplina.UsuarioCpfNavigation.Cpf,
                                 Status = AtividadeUsuario.Status,
-                                Total = AtividadeUsuario.Total
+                                Total = AtividadeUsuario.Total,                                
+                                IdUsuarioDisciplina = AtividadeUsuario.IdUsuarioDisciplina
                             };
 
             return Ok(resultado);
