@@ -258,13 +258,13 @@ namespace BackEnd.Controllers
         /// <summary>
         /// Altera Senha informando o CPF do usuario
         /// </summary>
-        [HttpPut("/api/Usuarios/Senha")]
+        [HttpPost("/api/Usuarios/Senha")]
         [Authorize]
         [TokenEmailFilter]
-        public async Task<IActionResult> PutSenha(Usuario usuario)
+        public async Task<IActionResult> AlterarSenha(UsuarioAlterarSenhaViewModel usuario ,[FromQuery]string email)
         {
 
-            Usuario user = _context.Usuario.Where(usr => usr.Email == usuario.Email).FirstOrDefault();
+            Usuario user = _context.Usuario.Where(usr => usr.Email == email).FirstOrDefault();
 
             if (usuario.Senha == user.Senha)
             {
@@ -277,7 +277,7 @@ namespace BackEnd.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuarioExists(usuario.Email))
+                if (!UsuarioExists(email))
                 {
                     return NotFound(new { msg = "Não foi possível encontrar usuário" });
                 }

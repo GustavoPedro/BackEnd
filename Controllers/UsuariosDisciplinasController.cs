@@ -75,22 +75,30 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet("ranking/{IdDisciplina}")]
-       
+
         public async Task<IQueryable<object>> GetRanking(int IdDisciplina)
         {
-            return from usuarioDisciplina in _context.UsuarioDisciplina
-                        join atividadeUsuario in _context.AtividadeUsuario
-                            on usuarioDisciplina.IdUsuarioDisciplina equals atividadeUsuario.IdUsuarioDisciplina 
-                            into grouping
-                        from atividadeUsuario in grouping.DefaultIfEmpty()
-                        where usuarioDisciplina.DisciplinaIdDisciplina == IdDisciplina
-                        group atividadeUsuario by new {atividadeUsuario.IdUsuarioDisciplina,usuarioDisciplina.UsuarioCpfNavigation.NomeSobrenome} into groupby
-                        orderby  groupby.Sum(gb => gb.Total) descending
-                        select new 
-                        { 
-                            Usuario = groupby.Key,
-                            Total = groupby.Sum(gb => gb.Total)
-                        };
+            var ranking = (from usuarioDisciplina in _context.UsuarioDisciplina
+                           join atividadeUsuario in _context.AtividadeUsuario
+                               on usuarioDisciplina.IdUsuarioDisciplina equals atividadeUsuario.IdUsuarioDisciplina
+                               into grouping
+                           from atividadeUsuario in grouping.DefaultIfEmpty()
+                           where usuarioDisciplina.DisciplinaIdDisciplina == IdDisciplina
+                           group atividadeUsuario by new { atividadeUsuario.IdUsuarioDisciplina, usuarioDisciplina.UsuarioCpfNavigation.NomeSobrenome } into groupby
+                           orderby groupby.Sum(gb => gb.Total) descending
+                           select new
+                           {
+                               IdUsuarioDisciplina = groupby.Key.IdUsuarioDisciplina,
+                               Nome = groupby.Key.NomeSobrenome,
+                               Total = groupby.Sum(gb => gb.Total)
+                           });
+            return ranking.Select((gp, i) => new
+            {
+                Posicao = i,
+                IdUsuarioDisciplina = gp.IdUsuarioDisciplina,
+                Nome = gp.Nome,
+                Total = gp.Total
+            });
 
         }
 
