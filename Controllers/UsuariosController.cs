@@ -99,9 +99,11 @@ namespace BackEnd.Controllers
         {           
             
             Usuario usuario = _mapper.Map<Usuario>(usuarioViewModel);
-
+            
             _context.Entry(usuario).State = EntityState.Modified;
             _context.Entry(usuario).Property(x => x.Senha).IsModified = false;
+            _context.Entry(usuario).Property(x => x.Email).IsModified = false;
+            _context.Entry(usuario).Property(x => x.Cpf).IsModified = false;
             _context.Entry(usuario).Property(x => x.EscolaCnpj).IsModified = false;
 
             try

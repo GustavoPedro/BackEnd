@@ -75,10 +75,10 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet("ranking/{IdDisciplina}")]
-
-        public async Task<IQueryable<object>> GetRanking(int IdDisciplina)
+        [Authorize]
+        public async Task<IEnumerable<object>> GetRanking(int IdDisciplina)
         {
-            var ranking = (from usuarioDisciplina in _context.UsuarioDisciplina
+           return from usuarioDisciplina in _context.UsuarioDisciplina
                            join atividadeUsuario in _context.AtividadeUsuario
                                on usuarioDisciplina.IdUsuarioDisciplina equals atividadeUsuario.IdUsuarioDisciplina
                                into grouping
@@ -91,14 +91,7 @@ namespace BackEnd.Controllers
                                IdUsuarioDisciplina = groupby.Key.IdUsuarioDisciplina,
                                Nome = groupby.Key.NomeSobrenome,
                                Total = groupby.Sum(gb => gb.Total)
-                           });
-            return ranking.Select((gp, i) => new
-            {
-                Posicao = i,
-                IdUsuarioDisciplina = gp.IdUsuarioDisciplina,
-                Nome = gp.Nome,
-                Total = gp.Total
-            });
+                           };
 
         }
 
