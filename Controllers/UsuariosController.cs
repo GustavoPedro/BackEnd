@@ -94,15 +94,12 @@ namespace BackEnd.Controllers
 
         [HttpPut("/api/Usuarios")]
         [Authorize]
-        [TokenEmailFilter]
-        public async Task<IActionResult> PutUsuario([FromQuery]string email, UsuarioViewModel usuarioViewModel)
-        {           
-            
+        public async Task<IActionResult> PutUsuario(UsuarioViewModel usuarioViewModel)
+        {
             Usuario usuario = _mapper.Map<Usuario>(usuarioViewModel);
             
             _context.Entry(usuario).State = EntityState.Modified;
             _context.Entry(usuario).Property(x => x.Senha).IsModified = false;
-            _context.Entry(usuario).Property(x => x.Email).IsModified = false;
             _context.Entry(usuario).Property(x => x.Cpf).IsModified = false;
             _context.Entry(usuario).Property(x => x.EscolaCnpj).IsModified = false;
 
@@ -112,7 +109,7 @@ namespace BackEnd.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuarioExists(email))
+                if (!UsuarioExists(usuarioViewModel.Email))
                 {
                     return NotFound(new {msg = "Não foi possível encontrar usuário" });
                 }
