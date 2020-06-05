@@ -72,28 +72,7 @@ namespace BackEnd.Controllers
             }
 
             return usuarioDisciplina;
-        }
-
-        [HttpGet("ranking/{IdDisciplina}")]
-        [Authorize]
-        public async Task<IEnumerable<object>> GetRanking(int IdDisciplina)
-        {
-           return from usuarioDisciplina in _context.UsuarioDisciplina
-                           join atividadeUsuario in _context.AtividadeUsuario
-                               on usuarioDisciplina.IdUsuarioDisciplina equals atividadeUsuario.IdUsuarioDisciplina
-                               into grouping
-                           from atividadeUsuario in grouping.DefaultIfEmpty()
-                           where usuarioDisciplina.DisciplinaIdDisciplina == IdDisciplina
-                           group atividadeUsuario by new { atividadeUsuario.IdUsuarioDisciplina, usuarioDisciplina.UsuarioCpfNavigation.NomeSobrenome } into groupby
-                           orderby groupby.Sum(gb => gb.Total) descending
-                           select new
-                           {
-                               IdUsuarioDisciplina = groupby.Key.IdUsuarioDisciplina,
-                               Nome = groupby.Key.NomeSobrenome,
-                               Total = groupby.Sum(gb => gb.Total)
-                           };
-
-        }
+        }      
 
         /// <summary>
         /// Atualiza usuário em disciplina a partir do usuario na disciplina informado e do id da disciplina que se deseja trocar        
