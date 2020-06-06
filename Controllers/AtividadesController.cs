@@ -50,23 +50,25 @@ namespace BackEnd.Controllers
         }
 
         //Método para inserir alunos cadastrados em atividades que estejam "Em andamento"
-        private void AtivAndamento(Atividade atividade)
+        private async void AtivAndamento(Atividade atividade)
         {
             if (atividade.StatusAtividade == StatusAtividadeEnum.Emand)
             {
-                List<UsuarioDisciplina> lista = _context.UsuarioDisciplina.Where(a => a.DisciplinaIdDisciplina == atividade.IdDisciplina).ToList();
-
+                List<UsuarioDisciplina> lista = await _context.UsuarioDisciplina.Where(a => a.DisciplinaIdDisciplina == atividade.IdDisciplina && a.UsuarioCpfNavigation.TipoUsuario == TipoUsuarioEnum.Aluno).ToListAsync();
+                List<AtividadeUsuario> atividades = await _context.AtividadeUsuario.Where(ativ => ativ.IdUsuarioDisciplinaNavigation.DisciplinaIdDisciplina == atividade.IdDisciplina && ativ.IdAtividade == atividade.IdAtividade).ToListAsync();
                 foreach (UsuarioDisciplina usuarioDisc in lista)
                 {
+                    if (!atividades.Any(usr => usr.IdUsuarioDisciplina == usuarioDisc.IdUsuarioDisciplina))
+                    {
+                        AtividadeUsuario atividadeUsuario = new AtividadeUsuario();
+                        atividadeUsuario.IdAtividade = atividade.IdAtividade;
+                        atividadeUsuario.IdUsuarioDisciplina = usuarioDisc.IdUsuarioDisciplina;
+                        atividadeUsuario.Status = "Em andamento";
+                        atividadeUsuario.Total = 0;
 
-                    AtividadeUsuario atividadeUsuario = new AtividadeUsuario();
-
-                    atividadeUsuario.IdAtividade = atividade.IdAtividade;
-                    atividadeUsuario.IdUsuarioDisciplina = usuarioDisc.IdUsuarioDisciplina;
-                    atividadeUsuario.Status = "Em andamento";
-                    atividadeUsuario.Total = 0;
-
-                    _context.AtividadeUsuario.Add(atividadeUsuario);
+                        _context.AtividadeUsuario.Add(atividadeUsuario);
+                    }
+                    
                 }
             }
         }

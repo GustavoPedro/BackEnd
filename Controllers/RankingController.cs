@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BackEnd.Filters;
 using BackEnd.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +23,9 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet("{IdDisciplina}")]
-        public async Task<RankingAtividadesViewModel> GetRanking(int IdDisciplina)
+        [Authorize]
+        [TokenEmailFilter]
+        public async Task<RankingAtividadesViewModel> GetRanking([FromQuery] string email,int IdDisciplina)
         {
             var ranking = from usuarioDisciplina in _context.UsuarioDisciplina
                           join atividadeUsuario in _context.AtividadeUsuario
@@ -41,7 +45,7 @@ namespace BackEnd.Controllers
 
             var atividades = await _context.AtividadeUsuario
             .Include(ativUser => ativUser.IdAtividadeNavigation)
-            .Where(ativUser => ativUser.IdUsuarioDisciplinaNavigation.DisciplinaIdDisciplina == IdDisciplina)
+            .Where(ativUser => ativUser.IdUsuarioDisciplinaNavigation.DisciplinaIdDisciplina == IdDisciplina && ativUser.IdUsuarioDisciplinaNavigation.UsuarioCpfNavigation.Email == email)
             .ToListAsync();
 
             return new RankingAtividadesViewModel

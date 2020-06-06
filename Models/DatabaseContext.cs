@@ -28,7 +28,7 @@ namespace BackEnd.Models
                 entity.HasOne(d => d.Disciplina)
                     .WithMany(p => p.Atividades)
                     .HasForeignKey(d => d.IdDisciplina)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_Disciplina_has_Atividade_Atividade1");               
                
             });
@@ -43,7 +43,7 @@ namespace BackEnd.Models
                     .IsUnique();
 
                 entity.HasData(new Escola {
-                    Cnpj = "12345",
+                    Cnpj = "111",
                     Nome = "Una Aimorés",
                     Telefone = "31 3 3333 3333"
                 });
@@ -67,7 +67,7 @@ namespace BackEnd.Models
                 entity.HasOne(d => d.EscolaCnpjNavigation)
                     .WithMany(p => p.Usuario)
                     .HasForeignKey(d => d.EscolaCnpj)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_Usuario_Escola");
             });
 
@@ -76,13 +76,13 @@ namespace BackEnd.Models
                 entity.HasOne(d => d.IdAtividadeNavigation)
                                     .WithMany(p => p.AtividadeUsuarioDisciplina)
                                     .HasForeignKey(d => d.IdAtividade)
-                                    .OnDelete(DeleteBehavior.ClientSetNull)
+                                    .OnDelete(DeleteBehavior.Cascade)
                                     .HasConstraintName("fk_atividade_has_usuario_disciplina_atividade1");
 
                 entity.HasOne(d => d.IdUsuarioDisciplinaNavigation)
                     .WithMany(p => p.AtividadeUsuarioDisciplina)
                     .HasForeignKey(d => d.IdUsuarioDisciplina)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_atividade_has_usuario_disciplina_usuario_disciplina1");
             });
 
@@ -103,13 +103,13 @@ namespace BackEnd.Models
                 entity.HasOne(d => d.DisciplinaIdDisciplinaNavigation)
                     .WithMany(p => p.UsuarioDisciplina)
                     .HasForeignKey(d => d.DisciplinaIdDisciplina)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_Usuario_has_Disciplina_Disciplina1");
 
                 entity.HasOne(d => d.UsuarioCpfNavigation)
                     .WithMany(p => p.UsuarioDisciplina)
                     .HasForeignKey(d => d.UsuarioCpf)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_Usuario_has_Disciplina_Usuario1");
             });
 

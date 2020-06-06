@@ -1,10 +1,9 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BackEnd.Migrations
 {
-    public partial class blabla : Migration
+    public partial class DeleteCascade : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +12,7 @@ namespace BackEnd.Migrations
                 columns: table => new
                 {
                     IdDisciplina = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Sqlite:Autoincrement", true),
                     Descricao = table.Column<string>(nullable: true),
                     Materia = table.Column<string>(maxLength: 35, nullable: true),
                     Turno = table.Column<string>(maxLength: 20, nullable: true)
@@ -41,7 +40,7 @@ namespace BackEnd.Migrations
                 columns: table => new
                 {
                     IdAtividade = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Sqlite:Autoincrement", true),
                     IdDisciplina = table.Column<int>(nullable: false),
                     Descricao = table.Column<string>(nullable: true),
                     Atividade1 = table.Column<string>(maxLength: 30, nullable: false),
@@ -60,7 +59,7 @@ namespace BackEnd.Migrations
                         column: x => x.IdDisciplina,
                         principalTable: "Disciplina",
                         principalColumn: "IdDisciplina",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,7 +83,7 @@ namespace BackEnd.Migrations
                         column: x => x.EscolaCnpj,
                         principalTable: "Escola",
                         principalColumn: "Cnpj",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -92,7 +91,7 @@ namespace BackEnd.Migrations
                 columns: table => new
                 {
                     idUsuario_Disciplina = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Sqlite:Autoincrement", true),
                     UsuarioCpf = table.Column<string>(maxLength: 20, nullable: false),
                     disciplina_idDisciplina = table.Column<int>(nullable: false)
                 },
@@ -104,13 +103,13 @@ namespace BackEnd.Migrations
                         column: x => x.disciplina_idDisciplina,
                         principalTable: "Disciplina",
                         principalColumn: "IdDisciplina",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "fk_Usuario_has_Disciplina_Usuario1",
                         column: x => x.UsuarioCpf,
                         principalTable: "Usuario",
                         principalColumn: "Cpf",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -118,7 +117,7 @@ namespace BackEnd.Migrations
                 columns: table => new
                 {
                     IdAtividadeUsuario = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Sqlite:Autoincrement", true),
                     IdAtividade = table.Column<int>(nullable: false),
                     IdUsuarioDisciplina = table.Column<int>(nullable: false),
                     Status = table.Column<string>(nullable: true),
@@ -132,19 +131,19 @@ namespace BackEnd.Migrations
                         column: x => x.IdAtividade,
                         principalTable: "Atividade",
                         principalColumn: "IdAtividade",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "fk_atividade_has_usuario_disciplina_usuario_disciplina1",
                         column: x => x.IdUsuarioDisciplina,
                         principalTable: "UsuarioDisciplina",
                         principalColumn: "idUsuario_Disciplina",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 table: "Escola",
                 columns: new[] { "Cnpj", "Nome", "Telefone" },
-                values: new object[] { "12345", "Una Aimorés", "31 3 3333 3333" });
+                values: new object[] { "111", "Una Aimorés", "31 3 3333 3333" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Atividade_IdDisciplina",

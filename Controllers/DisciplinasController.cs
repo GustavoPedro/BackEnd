@@ -82,8 +82,16 @@ namespace BackEnd.Controllers
 
             if (existingParent != null)
             {
+                DisciplinaViewModel parentValues = new DisciplinaViewModel
+                {
+                    Descricao = model.Descricao,
+                    Materia = model.Materia,
+                    Turno = model.Turno,
+                    IdDisciplina = model.IdDisciplina
+                };
                 // Update parent
-                _context.Entry(existingParent).CurrentValues.SetValues(model);
+                _context.Entry(existingParent).CurrentValues.SetValues(parentValues);
+                
                 foreach (var existingChild in existingParent.UsuarioDisciplina.ToList())
                 {
                     if (!model.UsuarioDisciplina.Any(c => c.DisciplinaIdDisciplina == existingChild.DisciplinaIdDisciplina && c.UsuarioCpf == existingChild.UsuarioCpf))
@@ -91,7 +99,7 @@ namespace BackEnd.Controllers
                 }
                 foreach (var childModel in model.UsuarioDisciplina)
                 {
-                    if (!_context.UsuarioDisciplina.Any(usr => usr.DisciplinaIdDisciplina == childModel.DisciplinaIdDisciplina && usr.UsuarioCpf == childModel.UsuarioCpf))
+                    if (!_context.UsuarioDisciplina.Any(usr => usr.DisciplinaIdDisciplina == childModel.DisciplinaIdDisciplina && usr.UsuarioCpf == childModel.UsuarioCpf) && childModel.DisciplinaIdDisciplina != 0)
                     {
                         UsuarioDisciplina usrDisc = _mapper.Map<UsuarioDisciplina>(childModel);
                         existingParent.UsuarioDisciplina.Add(usrDisc);
@@ -113,7 +121,6 @@ namespace BackEnd.Controllers
                     throw;
                 }
             }
-
             return StatusCode(200, new { msg = $"Disciplina {existingParent.Materia} alterada com sucesso" });
         }
 
