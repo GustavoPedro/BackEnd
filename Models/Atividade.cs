@@ -31,8 +31,7 @@ namespace BackEnd.Models
         public DateTime DataEntrega { get; set; }
         [Required(ErrorMessage = "O campo de Tipo de Atividade é obrigatório")]
         [StringLength(45)]
-        public string TipoAtividade { get; set; }
-        [Required(ErrorMessage = "O campo de Premiação é obrigatório")]
+        public string TipoAtividade { get; set; }        
         [StringLength(45)]
         public string Premiacao { get; set; }
         [Required(ErrorMessage = "O campo de Moral da Atividade é obrigatório")]
