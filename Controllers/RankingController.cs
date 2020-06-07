@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BackEnd.Filters;
 using BackEnd.Models;
+using BackEnd.ViewModel.Premiacao;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -48,10 +49,29 @@ namespace BackEnd.Controllers
             .Where(ativUser => ativUser.IdUsuarioDisciplinaNavigation.DisciplinaIdDisciplina == IdDisciplina && ativUser.IdUsuarioDisciplinaNavigation.UsuarioCpfNavigation.Email == email)
             .ToListAsync();
 
+            List<PremiacaoViewModel> premiacoes = await _context.AtividadeUsuario
+                .Where(ativ => ativ.Status == "Concluído" &&
+                        ativ.IdAtividadeNavigation.IdDisciplina == IdDisciplina &&
+                        ativ.IdAtividadeNavigation.DataEntrega.Month == DateTime.Now.Month &&
+                        ativ.IdAtividadeNavigation.DataEntrega.Year == DateTime.Now.Year &&
+                        ativ.IdAtividadeNavigation.Premiacao != null
+                      )
+                .Include(ativ => ativ.IdUsuarioDisciplinaNavigation)
+                    .ThenInclude(ativ => ativ.UsuarioCpfNavigation)
+                .Include(ativ => ativ.IdAtividadeNavigation)
+                .Select(ativ => new PremiacaoViewModel
+                {
+                    IdAtividadeUsuario = ativ.IdAtividadeUsuario,
+                    Aluno = ativ.IdUsuarioDisciplinaNavigation.UsuarioCpfNavigation.NomeSobrenome,
+                    Premiacao = ativ.IdAtividadeNavigation.Premiacao
+                })
+                .ToListAsync().ConfigureAwait(true);
+
             return new RankingAtividadesViewModel
             {
                 Ranking = ranking.ToList(),
-                Atividades = atividades,                
+                Atividades = atividades,
+                Premiacoes = premiacoes
             };
 
         }
