@@ -30,9 +30,14 @@ namespace BackEnd.Controllers
         // GET: api/Disciplinas
         [HttpGet("/api/Disciplina")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Disciplina>>> GetDisciplina()
+        [TokenEmailFilter]
+        public async Task<ActionResult<IEnumerable<Disciplina>>> GetDisciplina(string email)
         {
             var result = from Disciplina in _context.Disciplina
+                        .Where(disc => _context.UsuarioDisciplina
+                        .Where(usrdisc => usrdisc.UsuarioCpfNavigation.Email == email)
+                        .Select(usrdisc => usrdisc.DisciplinaIdDisciplina)
+                        .Contains(disc.IdDisciplina))
                          select new
                          {
                              id = Disciplina.IdDisciplina,
@@ -66,6 +71,19 @@ namespace BackEnd.Controllers
             }
 
             return disciplina;
+        }
+
+
+        [HttpGet("/api/Disciplinas/Professor")]
+        [Authorize]
+        [TokenEmailFilter]
+        public async Task<IEnumerable<Disciplina>> GetDisciplinaProfessor(string email)
+        {
+            return await _context.Disciplina.Where(disc => _context.UsuarioDisciplina
+            .Where(usrdisc => usrdisc.UsuarioCpfNavigation.Email == email)
+            .Select(usrdisc => usrdisc.DisciplinaIdDisciplina)
+            .Contains(disc.IdDisciplina)
+            ).ToListAsync();
         }
 
         // PUT: api/Disciplinas/5

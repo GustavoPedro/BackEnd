@@ -12,6 +12,7 @@ using BackEnd.ViewModel.Atividade;
 using BackEnd.ViewModel.AtividadeUsuarioDisciplina;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SQLitePCL;
+using BackEnd.Filters;
 
 namespace BackEnd.Controllers
 {
@@ -33,6 +34,18 @@ namespace BackEnd.Controllers
         public async Task<ActionResult<IEnumerable<Atividade>>> GetAtividade()
         {
             return await _context.Atividade.ToListAsync();
+        }
+
+        [HttpGet("/api/Atividades/Professor")]
+        [Authorize(Roles = "Professor")]
+        [TokenEmailFilter]
+        public async Task<ActionResult<IEnumerable<Atividade>>> GetAtividadesProfessor(string email)
+        {
+            return await _context.Atividade.Where(ativ => _context.UsuarioDisciplina
+            .Where(usrdisc => usrdisc.UsuarioCpfNavigation.Email == email)
+            .Select(usrdisc => usrdisc.DisciplinaIdDisciplina)
+            .Contains(ativ.IdDisciplina)
+            ).ToListAsync();
         }
 
         // GET: api/Atividades/5

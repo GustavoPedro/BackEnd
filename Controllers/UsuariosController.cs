@@ -164,9 +164,13 @@ namespace BackEnd.Controllers
         public async Task<IActionResult> PutCargoUsuario(string cpf, UsuarioCargoViewModel model )
         {
             Usuario user = _context.Usuario.Where(usr => usr.Cpf == cpf).FirstOrDefault();
+            if (user == null)
+            {
+                return NotFound(new { msg = "O usuário informado não existe" });
+            }
 
             Usuario usuario = _mapper.Map<Usuario>(model);
-
+            
 
             user.TipoUsuario = usuario.TipoUsuario;
 
