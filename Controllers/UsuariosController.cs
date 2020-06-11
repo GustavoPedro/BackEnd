@@ -168,17 +168,15 @@ namespace BackEnd.Controllers
             {
                 return NotFound(new { msg = "O usuário informado não existe" });
             }
-
-            Usuario usuario = _mapper.Map<Usuario>(model);
             
 
-            user.TipoUsuario = usuario.TipoUsuario;
+            user.TipoUsuario = model.TipoUsuario;
 
             await _context.SaveChangesAsync();
             
     
 
-            return StatusCode(200, new { msg = $"Cargo do usuário {usuario.NomeSobrenome} alterado com sucesso" });
+            return StatusCode(200, new { msg = $"Cargo do usuário {user.NomeSobrenome} alterado com sucesso" });
         }
 
         [HttpGet]
