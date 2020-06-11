@@ -33,7 +33,7 @@ namespace BackEnd.Controllers
                               on usuarioDisciplina.IdUsuarioDisciplina equals atividadeUsuario.IdUsuarioDisciplina
                               into grouping
                           from atividadeUsuario in grouping.DefaultIfEmpty()
-                          where usuarioDisciplina.DisciplinaIdDisciplina == IdDisciplina
+                          where usuarioDisciplina.DisciplinaIdDisciplina == IdDisciplina && usuarioDisciplina.UsuarioCpfNavigation.TipoUsuario == TipoUsuarioEnum.Aluno
                           group atividadeUsuario by new { atividadeUsuario.IdUsuarioDisciplina, usuarioDisciplina.UsuarioCpfNavigation.NomeSobrenome, usuarioDisciplina.UsuarioCpfNavigation.Email } into groupby
                           orderby groupby.Sum(gb => gb.Total) descending
                           select new RankingViewModel
