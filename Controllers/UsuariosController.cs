@@ -26,6 +26,31 @@ namespace BackEnd.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("/api/UsuariosLista")]
+        [Authorize(Roles = "Adm")]
+        public async Task<ActionResult<object>> GetUsuario()
+        {
+            var usuario = await _context.Usuario 
+                .Select(us => new
+                {
+                    Cpf = us.Cpf,
+                    Email = us.Email,
+                    TipoUsuario = us.TipoUsuario,
+                    DataNascimento = us.DataNascimento,
+                    NomeSobrenome = us.NomeSobrenome,
+                    Telefone = us.Telefone,
+                    Escola = us.EscolaCnpjNavigation.Nome,
+                    EscolaCnpj = us.EscolaCnpjNavigation.Cnpj
+                }).ToListAsync();
+
+            if (usuario == null)
+            {
+                return NotFound(new { msg = "Não foi possível encontrar usuário" });
+            }
+
+            return usuario;
+        }
+
         /// <summary>
         /// Realiza a consulta de usuário por email
         /// </summary>
@@ -132,6 +157,24 @@ namespace BackEnd.Controllers
             }
 
             return StatusCode(200,new {msg = $"Usuário {usuario.NomeSobrenome} alterado com sucesso" });
+        }
+
+        [HttpPut("/api/Usuarios/Cargo/{cpf}")]
+        [Authorize(Roles = "Adm")]
+        public async Task<IActionResult> PutCargoUsuario(string cpf, UsuarioCargoViewModel model )
+        {
+            Usuario user = _context.Usuario.Where(usr => usr.Cpf == cpf).FirstOrDefault();
+
+            Usuario usuario = _mapper.Map<Usuario>(model);
+
+
+            user.TipoUsuario = usuario.TipoUsuario;
+
+            await _context.SaveChangesAsync();
+            
+    
+
+            return StatusCode(200, new { msg = $"Cargo do usuário {usuario.NomeSobrenome} alterado com sucesso" });
         }
 
         [HttpGet]

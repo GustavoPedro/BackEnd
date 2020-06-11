@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
@@ -41,7 +43,7 @@ namespace BackEnd.Models
         public virtual ICollection<AtividadeUsuario> AtividadeUsuarioDisciplina { get; set; }
         public virtual  Disciplina Disciplina { get; set; }
     }
-
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum StatusAtividadeEnum
     {
         [EnumMember(Value = "Pendente")]
