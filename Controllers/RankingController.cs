@@ -54,7 +54,8 @@ namespace BackEnd.Controllers
                         ativ.IdAtividadeNavigation.IdDisciplina == IdDisciplina &&
                         ativ.IdAtividadeNavigation.DataEntrega.Month == DateTime.Now.Month &&
                         ativ.IdAtividadeNavigation.DataEntrega.Year == DateTime.Now.Year &&
-                        ativ.IdAtividadeNavigation.Premiacao != null
+                        ativ.IdAtividadeNavigation.Premiacao != null &&
+                        ativ.IdUsuarioDisciplinaNavigation.UsuarioCpfNavigation.TipoUsuario == TipoUsuarioEnum.Aluno
                       )
                 .Include(ativ => ativ.IdUsuarioDisciplinaNavigation)
                     .ThenInclude(ativ => ativ.UsuarioCpfNavigation)
